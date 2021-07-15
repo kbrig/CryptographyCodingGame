@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using EncryptionCodingGame.Solver;
 using EncryptionCodingGame.Solver.Core;
 
@@ -12,7 +9,6 @@ namespace EncryptionCodingGame.Problem
     {
         private static readonly IVigenereSolver DEFAULT_SOLVER = new CoreVigenereSolver();
 
-        private Dictionary<char, char[]> map;
         private string key;
         private IVigenereSolver solver = DEFAULT_SOLVER;
 
