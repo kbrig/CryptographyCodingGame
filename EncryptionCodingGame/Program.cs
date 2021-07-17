@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using EncryptionCodingGame.Problem;
-using EncryptionCodingGame.Solver.Core;
 using EncryptionCodingGame.Solver.PlayerImplementation;
 
 namespace EncryptionCodingGame
@@ -25,8 +23,6 @@ namespace EncryptionCodingGame
             try
             {
                 GameMode();
-                //TestMode();
-                ToolMode();
             }
             catch (NotImplementedException)
             {
@@ -36,6 +32,7 @@ namespace EncryptionCodingGame
             {
                 Console.WriteLine($"Unexpected error of type {ex.GetType().Name}: {ex.Message}");
             }
+            ToolMode();
         }
 
         private static void GameMode()
@@ -55,27 +52,6 @@ namespace EncryptionCodingGame
             catch (NotImplementedException)
             {
                 Console.WriteLine("Not done yet? Implement all methods!");
-            }
-        }
-
-        private static void TestMode()
-        {
-            var failed = 0;
-            foreach (var problem in problems)
-            {
-                if (!problem.RunTest())
-                {
-                    failed++;
-                }
-            }
-
-            if (failed > 0)
-            {
-                Console.WriteLine($"The game is not complete yet! {failed} problems are in a failed state.");
-            }
-            else
-            {
-                Console.WriteLine("SUCCESS! You beat the game! Congratulations!");
             }
         }
 

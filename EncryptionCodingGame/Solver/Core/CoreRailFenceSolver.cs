@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace EncryptionCodingGame.Solver.Core
 {
     public class CoreRailFenceSolver : IRailFenceSolver
@@ -45,28 +47,36 @@ namespace EncryptionCodingGame.Solver.Core
             return plaintext;
         }
 
+        private string EncryptLine(string input, uint startIndex, uint downJump, uint upJump)
+        {
+            var output = "";
+            var isDownJump = true;
+
+            for (uint i = startIndex; i < input.Length; i += isDownJump ? downJump : upJump)
+            {
+                output += input[(int)i];
+                isDownJump = !isDownJump;
+            }
+            return output;
+        }
+
         public string Encrypt(string plaintext, uint depth)
         {
-            var rail = new string[depth];
-            for (int i = 0; i < depth; i++)
+            var ciphertext = "";
+            var indexedDepth = depth - 1;
+            var maxJump = indexedDepth * 2;
+
+            for (uint i = 0; i < depth; i++)
             {
-                rail[i] = "";
+                var down = maxJump - (i * 2);
+                var up = maxJump - ((indexedDepth - i) * 2);
+
+                ciphertext += EncryptLine(
+                    plaintext,
+                    i,
+                    down == 0 ? maxJump : down,
+                    up == 0 ? maxJump : up);
             }
-
-            var currentDepth = 0;
-            var dir = 1;
-            for (int i = 0; i < plaintext.Length; i++)
-            {
-                rail[currentDepth] += plaintext[i];
-
-                if (currentDepth == depth - 1 || (currentDepth == 0 && i != 0))
-                {
-                    dir *= -1;
-                }
-                currentDepth += dir;
-            }
-
-            var ciphertext = string.Concat(rail);
             return ciphertext;
         }
     }
