@@ -20,10 +20,6 @@ namespace EncryptionCodingGame.Problem
             this.transpositionCount = transpositionCount;
         }
 
-        protected override string ExpectedCipherText => "AEXIXXLTXPNT";
-
-        protected override string ExpectedPlainText => "PLAINTEXT";
-
         public override string Decrypt(string ciphertext)
         {
             return solver.Decrypt(ciphertext, this.key, this.transpositionCount);

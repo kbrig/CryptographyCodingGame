@@ -11,9 +11,6 @@ namespace EncryptionCodingGame.Problem
         private string key;
         private IPlayfairSolver solver = DEFAULT_SOLVER;
 
-        protected override string ExpectedCipherText => @"QPBSRQIUSZ";
-        protected override string ExpectedPlainText => @"PLAINTEXT";
-
         public PlayfairEncryptionProblem(string key = "MONARCHY")
         {
             this.key = key;

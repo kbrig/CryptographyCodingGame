@@ -13,11 +13,6 @@ namespace EncryptionCodingGame.Problem
         private IFeistelSolver solver = DEFAULT_SOLVER;
         private int blocksize = BLOCK_SIZE;
 
-        //TODO: REPLACE THIS
-        protected override string ExpectedCipherText => "dHJ+dmN/cnp9Z3ZrZw==";
-
-        protected override string ExpectedPlainText => "PLAINTEXT";
-
         public override string Decrypt(string ciphertext)
         {
             return solver.Decrypt(ciphertext, blocksize);

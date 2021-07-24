@@ -14,10 +14,6 @@ namespace EncryptionCodingGame.Problem
         {
         }
 
-        protected override string ExpectedCipherText => throw new NotImplementedException();
-
-        protected override string ExpectedPlainText => throw new NotImplementedException();
-
         public override string Decrypt(string ciphertext)
         {
             return solver.Decrypt(ciphertext, 64);

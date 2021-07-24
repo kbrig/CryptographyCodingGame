@@ -11,9 +11,6 @@ namespace EncryptionCodingGame.Problem
         private int shift;
         private ICaesarSolver solver = DEFAULT_SOLVER;
 
-        protected override string ExpectedCipherText => @"SODLQWHAW";
-        protected override string ExpectedPlainText => @"PLAINTEXT";
-
         public CaesarEncryptionProblem(int shift = 3)
         {
             this.shift = shift;

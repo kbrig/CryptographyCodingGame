@@ -16,9 +16,6 @@ namespace EncryptionCodingGame.Problem
             this.key = key;
         }
 
-        protected override string ExpectedCipherText => "\u0004\u0004\b\u001a\a\a\u000e\u001d\r";
-        protected override string ExpectedPlainText => "PLAINTEXT";
-
         public override string Decrypt(string ciphertext)
         {
             return solver.Decrypt(ciphertext, this.key);

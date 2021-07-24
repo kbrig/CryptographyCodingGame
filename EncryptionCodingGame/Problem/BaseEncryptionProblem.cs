@@ -4,8 +4,6 @@ namespace EncryptionCodingGame.Problem
     public abstract class BaseEncryptionProblem
     {
         public string PlainText { get; set; }
-        protected abstract string ExpectedCipherText { get; }
-        protected abstract string ExpectedPlainText { get; }
 
         public abstract string Encrypt(string plaintext);
         public abstract string Decrypt(string ciphertext);
@@ -21,24 +19,7 @@ namespace EncryptionCodingGame.Problem
             Console.WriteLine();
         }
 
-        public bool RunTest(string plaintext = "PLAINTEXT")
-        {
-            LogHeader();
-
-            var ciphertext = Encrypt(plaintext);
-            var newplain = Decrypt(ciphertext);
-            var encryptResult = String.Compare(ExpectedCipherText, ciphertext) == 0;
-            var decryptResult = String.Compare(newplain, plaintext) == 0;
-
-            Console.WriteLine($"Cipher ({(encryptResult ? "S" : "F")}): {ciphertext}");
-            Console.WriteLine($"Plain ({(decryptResult ? "S" : "F")}): {newplain}");
-
-            LogFooter();
-            return encryptResult && decryptResult;
-        }
-
         protected virtual void _ToolSetup() { }
-
 
         public void Tool()
         {

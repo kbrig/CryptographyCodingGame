@@ -40,7 +40,11 @@ namespace EncryptionCodingGame.Solver.Core
         {
             for (int i = 0; i < transpositionCount; i++)
             {
-                ciphertext = TransposeText(ciphertext, key, (buffer, pindex, input, cindex) => TransposeChar(ref buffer, pindex, input[cindex]));
+                ciphertext = TransposeText(
+                    ciphertext,
+                    key,
+                    (buffer, pindex, input, cindex) => TransposeChar(ref buffer, pindex, input[cindex])
+                );
             }
             var output = ciphertext.TrimEnd('X');
             return output;
@@ -53,7 +57,11 @@ namespace EncryptionCodingGame.Solver.Core
 
             for (int i = 0; i < transpositionCount; i++)
             {
-                output = TransposeText(output, key, (buffer, pindex, input, cindex) => TransposeChar(ref buffer, cindex, input[pindex]));
+                output = TransposeText(
+                    output,
+                    key,
+                    (buffer, pindex, input, cindex) => TransposeChar(ref buffer, cindex, input[pindex])
+                );
             }
 
             return output;

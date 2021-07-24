@@ -16,10 +16,6 @@ namespace EncryptionCodingGame.Problem
             this.depth = depth;
         }
 
-        protected override string ExpectedCipherText => "PNTLITXAE";
-
-        protected override string ExpectedPlainText => "PLAINTEXT";
-
         public override string Decrypt(string ciphertext)
         {
             return solver.Decrypt(ciphertext, this.depth);
