@@ -35,6 +35,9 @@ namespace EncryptionCodingGame.Problem
 
             Console.Write("What is your keyword (Remember: no dupplicate letters and no 'J's)? ");
             this.key = Console.ReadLine().ToUpper();
+            Console.Write("Filler character? ");
+            var filler = Console.ReadLine()[0];
+            this.solver = new CorePlayfairSolver(filler);
         }
 
         public bool RunSolver(IPlayfairSolver solver)

@@ -7,6 +7,12 @@ namespace EncryptionCodingGame.Solver.Core
     {
         private const int ROW_LENGTH = 5;
         private char[] orderedValues = new char[25];
+        private char filler = 'X';
+
+        public CorePlayfairSolver(char fillerCharacter = 'X')
+        {
+            filler = fillerCharacter;
+        }
 
         private void PrintTable()
         {
@@ -111,6 +117,7 @@ namespace EncryptionCodingGame.Solver.Core
 
         public string Encrypt(string plaintext, string key)
         {
+            plaintext.Replace(" ", "");
             InitTable(key);
             var ciphertext = "";
             plaintext = plaintext.Replace('J', 'I');

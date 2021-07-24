@@ -46,13 +46,13 @@ namespace EncryptionCodingGame.Problem
             var choice = Console.ReadLine().ToUpper();
 
             Console.Write("Please input your text: ");
-            var text = Console.ReadLine().Replace(" ", "").ToUpper();
+            var text = Console.ReadLine();
 
             _ToolSetup();
 
             switch (choice)
             {
-                case "E": Console.WriteLine($"Ciphertext: {Encrypt(text)}"); break;
+                case "E": Console.WriteLine($"Ciphertext: {Encrypt(text.ToUpper())}"); break;
                 case "D": Console.WriteLine($"Plaintext: {Decrypt(text)}"); break;
                 default: break;
             }

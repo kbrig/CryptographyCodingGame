@@ -1,5 +1,6 @@
 ﻿using System;
 using EncryptionCodingGame.Problem;
+using EncryptionCodingGame.Solver.Core;
 using EncryptionCodingGame.Solver.PlayerImplementation;
 
 namespace EncryptionCodingGame
@@ -14,6 +15,8 @@ namespace EncryptionCodingGame
             new VernamEncryptionProblem(),
             new RailFenceEncryptionProblem(),
             new ColumnarTranspositionEncryptionProblem(),
+            new FeistelEncryptionProblem(),
+            new DESEncryptionProblem()
         };
 
         static void Main(string[] args)
@@ -22,6 +25,7 @@ namespace EncryptionCodingGame
 
             try
             {
+                TestMode();
                 GameMode();
             }
             catch (NotImplementedException)
@@ -35,6 +39,17 @@ namespace EncryptionCodingGame
             ToolMode();
         }
 
+        private static void TestMode()
+        {
+            //(problems[0] as CaesarEncryptionProblem).RunSolver(new CoreCaesarSolver());
+            //(problems[1] as PlayfairEncryptionProblem).RunSolver(new CorePlayfairSolver());
+            //(problems[2] as VigenereEncryptionProblem).RunSolver(new CoreVigenereSolver());
+            //(problems[3] as VernamEncryptionProblem).RunSolver(new CoreVernamSolver());
+            //(problems[4] as RailFenceEncryptionProblem).RunSolver(new CoreRailFenceSolver());
+            //(problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new CoreColumnarTranspositionSolver());
+            //(problems[6] as FeistelEncryptionProblem).RunSolver(new CoreFeistelSolver());
+        }
+
         private static void GameMode()
         {
             try
@@ -44,7 +59,8 @@ namespace EncryptionCodingGame
                     (problems[2] as VigenereEncryptionProblem).RunSolver(new PIVigenereSolver()) &&
                     (problems[3] as VernamEncryptionProblem).RunSolver(new PIVernamSolver()) &&
                     (problems[4] as RailFenceEncryptionProblem).RunSolver(new PIRailFenceSolver()) &&
-                    (problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new PIColumnarTranspositionSolver()))
+                    (problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new PIColumnarTranspositionSolver()) &&
+                    (problems[6] as FeistelEncryptionProblem).RunSolver(new PIFeistelSolver()))
                 {
                     Console.WriteLine("Game won! Now go to bed!");
                 }

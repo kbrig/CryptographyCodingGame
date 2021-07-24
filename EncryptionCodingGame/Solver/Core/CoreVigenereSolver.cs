@@ -50,6 +50,7 @@ namespace EncryptionCodingGame.Solver.Core
 
         public string Encrypt(string plaintext, string key)
         {
+            plaintext = plaintext.Replace(" ", "");
             var ciphertext = "";
 
             for (int i = 0; i < plaintext.Length; i++)
