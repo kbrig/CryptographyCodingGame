@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EncryptionCodingGame
 {
@@ -30,41 +31,87 @@ namespace EncryptionCodingGame
             return bytes;
         }
 
-        public static List<BitArray> Splice(this BitArray bits, int blocksize)
+        public static BitArray SwapHalves(this BitArray block)
         {
-            //Console.WriteLine($"Splicing: {bits.ToBinaryString()}");
+            var blocksize = block.Length;
+            var halves = block.Splice(blocksize / 2);
+            halves.Reverse();
 
+            var newBlock = halves.FuseBlocks(blocksize / 2);
+            Console.WriteLine($"{block.ToBinaryString()} => {newBlock.ToBinaryString()}");
+
+            return block;
+        }
+
+        public static List<BitArray> Splice(this BitArray bits, int? blocksizeOverride = null)
+        {
+            Console.WriteLine($"Splicing: {bits.ToBinaryString()}");
+            var blocksize = bits.Length / 2;
+            if (blocksizeOverride.HasValue)
+            {
+                blocksize = blocksizeOverride.Value;
+            }
             var arrays = new List<BitArray>();
             for (int i = 0; i < bits.Length; i += blocksize)
             {
-                var array = new BitArray(blocksize);
-                for (int j = 0; j < blocksize; j++)
-                {
-                    array[j] = bits[i + j];
-                }
+                var array = bits.Subset(i, blocksize);
                 arrays.Add(array);
 
-                //Console.WriteLine($"\tBlock\t{i / blocksize}: {array.ToBinaryString()}");
+                Console.WriteLine($"\tBlock\t{i / blocksize}: {array.ToBinaryString()}");
             }
             return arrays;
         }
 
-        public static BitArray FuseBlocks(this List<BitArray> blocks, int blocksize)
+        public static BitArray Subset(this BitArray bits, int startIndex, int length)
         {
-            if (blocks == null || blocks.Count == 0)
+            var output = new BitArray(length);
+
+            for (int i = 0; i < length; i++)
+            {
+                output[i] = bits[startIndex + i];
+            }
+            return output;
+        }
+
+        public static BitArray FuseBlocks(this IEnumerable<BitArray> blocks, int? blocksizeOverride = null)
+        {
+            if (blocks == null)
             {
                 return null;
             }
-
-            var buffer = new bool[blocks.Count * blocksize];
-            for (int i = 0; i < blocks.Count; i++)
+            var count = blocks.Count();
+            if (count == 0)
             {
-                var block = blocks[i];
+                return new BitArray(0);
+            }
+            var blocksize = blocks.First().Length;
+            if (blocksizeOverride.HasValue)
+            {
+                blocksize = blocksizeOverride.Value;
+            }
+
+            var buffer = new bool[count * blocksize];
+            for (int i = 0; i < count; i++)
+            {
+                var block = blocks.ElementAt(i);
 
                 block.CopyTo(buffer, i * blocksize);
             }
             var result = new BitArray(buffer);
             return result;
+        }
+
+        public static int[] ToInt32Array(this BitArray block)
+        {
+            var array = new int[block.Length / sizeof(int)];
+            block.CopyTo(array, 0);
+            return array;
+        }
+
+        public static BitArray Concat(this BitArray blockA, BitArray blockB)
+        {
+            var blocks = new List<BitArray> { blockA, blockB };
+            return blocks.FuseBlocks();
         }
     }
 }

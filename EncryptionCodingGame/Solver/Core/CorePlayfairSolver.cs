@@ -111,16 +111,17 @@ namespace EncryptionCodingGame.Solver.Core
 
             }
 
-            plaintext = plaintext.Trim('X');
+            plaintext = plaintext.Trim(filler);
             return plaintext;
         }
 
         public string Encrypt(string plaintext, string key)
         {
-            plaintext.Replace(" ", "");
+            plaintext = plaintext.Replace(" ", "")
+                                 .Replace('J', 'I')
+                                 .ToUpper();
             InitTable(key);
             var ciphertext = "";
-            plaintext = plaintext.Replace('J', 'I');
 
             for (int i = 0, j = i + 1; i < plaintext.Length; i += 2, j += 2)
             {
@@ -133,14 +134,14 @@ namespace EncryptionCodingGame.Solver.Core
                 }
                 else
                 {
-                    p2 = 'X';
+                    p2 = filler;
                 }
 
                 // FIX COMPARISON IF DUPPLICATE
                 if (p1 == p2)
                 {
-                    p2 = 'X';
-                    plaintext.Insert(j, "X");
+                    p2 = filler;
+                    plaintext.Insert(j, new string(new [] { filler }));
                 }
 
                 var pos1 = Array.IndexOf(orderedValues, p1);

@@ -33,7 +33,7 @@ namespace EncryptionCodingGame.Problem
 
             switch (choice)
             {
-                case "E": Console.WriteLine($"Ciphertext: {Encrypt(text.ToUpper())}"); break;
+                case "E": Console.WriteLine($"Ciphertext: {Encrypt(text)}"); break;
                 case "D": Console.WriteLine($"Plaintext: {Decrypt(text)}"); break;
                 default: break;
             }

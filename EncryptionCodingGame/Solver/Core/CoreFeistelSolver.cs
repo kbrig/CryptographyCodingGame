@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using EncryptionCodingGame;
 
 namespace EncryptionCodingGame.Solver.Core
 {
@@ -69,17 +70,6 @@ namespace EncryptionCodingGame.Solver.Core
             return blocks;
         }
 
-        private BitArray SwapHalves(BitArray block, int blocksize)
-        {
-            var halves = block.Splice(blocksize / 2);
-            halves.Reverse();
-
-            var newBlock = halves.FuseBlocks(blocksize / 2);
-            Console.WriteLine($"{block.ToBinaryString()} => {newBlock.ToBinaryString()}");
-
-            return block;
-        }
-
         private List<BitArray> Feistel(List<BitArray> blocks, int roundsCount, int blocksize)
         {
             var cipherBlocks = new List<BitArray>();
@@ -95,7 +85,7 @@ namespace EncryptionCodingGame.Solver.Core
                     block = RoundFunction(block, key);
                 }
 
-                block = SwapHalves(block, blocksize);
+                block = block.SwapHalves();
                 cipherBlocks.Add(block);
             }
             return cipherBlocks;
