@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace EncryptionCodingGame
 {
@@ -31,6 +32,20 @@ namespace EncryptionCodingGame
                 return newDefault;
             }
             return val;
+        }
+
+        public static string FromBase64(this string s)
+        {
+            var bytes = Convert.FromBase64String(s);
+            var output = Encoding.ASCII.GetString(bytes);
+            return output;
+        }
+
+        public static string ToBase64(this string s)
+        {
+            var bytes = Encoding.ASCII.GetBytes(s);
+            var output = Convert.ToBase64String(bytes);
+            return output;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using EncryptionCodingGame.Problem;
+using EncryptionCodingGame.Solver;
 using EncryptionCodingGame.Solver.Core;
 using EncryptionCodingGame.Solver.PlayerImplementation;
 
@@ -7,9 +9,9 @@ namespace EncryptionCodingGame
 {
     class Program
     {
-        static BaseEncryptionProblem[] problems = new []
+        static IEncryptionProblem[] problems = new []
         {
-            new CaesarEncryptionProblem() as BaseEncryptionProblem,
+            new CaesarEncryptionProblem() as IEncryptionProblem,
             new PlayfairEncryptionProblem(),
             new VigenereEncryptionProblem(),
             new VernamEncryptionProblem(),
@@ -19,7 +21,18 @@ namespace EncryptionCodingGame
             new DESEncryptionProblem()
         };
 
-        [STAThread]
+        static Dictionary<Type, Func<ISolver>> SolverFactory = new Dictionary<Type, Func<ISolver>>
+        {
+            { typeof(CaesarEncryptionProblem), () => new PICaesarSolver() },
+            { typeof(PlayfairEncryptionProblem), () => new PIPlayfairSolver() },
+            { typeof(VigenereEncryptionProblem), () => new PIVigenereSolver() },
+            { typeof(VernamEncryptionProblem), () => new PIVernamSolver() },
+            { typeof(RailFenceEncryptionProblem), () => new PIRailFenceSolver() },
+            { typeof(ColumnarTranspositionEncryptionProblem), () => new PIColumnarTranspositionSolver() },
+            { typeof(FeistelEncryptionProblem), () => new PIFeistelSolver() },
+            { typeof(DESEncryptionProblem), () => new PIDESSolver() },
+        };
+
         static void Main(string[] args)
         {
             Console.WriteLine("Hello, let's start your code!");
@@ -27,7 +40,7 @@ namespace EncryptionCodingGame
             try
             {
                 TestMode();
-                GameMode();
+                //GameMode();
             }
             catch (NotImplementedException)
             {
@@ -37,35 +50,31 @@ namespace EncryptionCodingGame
             {
                 Console.WriteLine($"Unexpected error of type {ex.GetType().Name}: {ex.Message}");
             }
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
             ToolMode();
         }
 
         private static void TestMode()
         {
-            (problems[0] as CaesarEncryptionProblem).RunSolver(new CoreCaesarSolver());
-            (problems[1] as PlayfairEncryptionProblem).RunSolver(new CorePlayfairSolver());
-            (problems[2] as VigenereEncryptionProblem).RunSolver(new CoreVigenereSolver());
-            (problems[3] as VernamEncryptionProblem).RunSolver(new CoreVernamSolver());
-            (problems[4] as RailFenceEncryptionProblem).RunSolver(new CoreRailFenceSolver());
-            (problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new CoreColumnarTranspositionSolver());
-            (problems[6] as FeistelEncryptionProblem).RunSolver(new CoreFeistelSolver());
-            (problems[7] as DESEncryptionProblem).RunSolver(new CoreDESSolver());
+            foreach (var problem in problems)
+            {
+                problem.RunCoreSolver();
+            }
         }
 
         private static void GameMode()
         {
             try
             {
-                if ((problems[0] as CaesarEncryptionProblem).RunSolver(new PICaesarSolver()) &&
-                    (problems[1] as PlayfairEncryptionProblem).RunSolver(new PIPlayfairSolver()) &&
-                    (problems[2] as VigenereEncryptionProblem).RunSolver(new PIVigenereSolver()) &&
-                    (problems[3] as VernamEncryptionProblem).RunSolver(new PIVernamSolver()) &&
-                    (problems[4] as RailFenceEncryptionProblem).RunSolver(new PIRailFenceSolver()) &&
-                    (problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new PIColumnarTranspositionSolver()) &&
-                    (problems[6] as FeistelEncryptionProblem).RunSolver(new PIFeistelSolver()))
+                foreach (var problem in problems)
                 {
-                    Console.WriteLine("Game won! Now go to bed!");
+                    var solverCreator = SolverFactory[problem.GetType()];
+                    var solver = solverCreator();
+                    problem.RunSolver(solver);
                 }
+                Console.WriteLine("Game won! Now go to bed!");
             }
             catch (NotImplementedException)
             {

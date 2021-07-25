@@ -5,15 +5,19 @@ using EncryptionCodingGame.Solver.Core;
 
 namespace EncryptionCodingGame.Problem
 {
-    public class ColumnarTranspositionEncryptionProblem : BaseEncryptionProblem
+    public class ColumnarTranspositionEncryptionProblem : BaseKeyEncryptionProblem<IColumnarTranspositionSolver, string>
     {
         private static readonly IColumnarTranspositionSolver DEFAULT_SOLVER = new CoreColumnarTranspositionSolver();
+        private const string DEFAULT_KEY = "3142";
 
         private string key;
         private IColumnarTranspositionSolver solver = DEFAULT_SOLVER;
         private uint transpositionCount;
 
-        public ColumnarTranspositionEncryptionProblem(string key = "4312", uint transpositionCount = 1)
+        protected override IColumnarTranspositionSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override string DefaultKey => DEFAULT_KEY;
+
+        public ColumnarTranspositionEncryptionProblem(string key = DEFAULT_KEY, uint transpositionCount = 1)
         {
             this.key = key;
             this.transpositionCount = transpositionCount;
@@ -21,12 +25,12 @@ namespace EncryptionCodingGame.Problem
 
         public override string Decrypt(string ciphertext)
         {
-            return solver.Decrypt(ciphertext, key, transpositionCount);
+            return solver.Decrypt(ciphertext, key);
         }
 
         public override string Encrypt(string plaintext)
         {
-            return solver.Encrypt(plaintext, key, transpositionCount);
+            return solver.Encrypt(plaintext, key);
         }
 
         protected override void _ToolSetup()
@@ -35,34 +39,36 @@ namespace EncryptionCodingGame.Problem
             this.transpositionCount = Tools.ReadInputOrDefault("How many consecutive transpositions with this key? ", transpositionCount);
         }
 
-        public bool RunSolver(IColumnarTranspositionSolver solver)
+        protected override SolverResult _SolverRun(IColumnarTranspositionSolver solver)
         {
-            if (solver == null)
-            {
-                throw new ArgumentNullException(nameof(solver));
-            }
-
-            LogHeader();
-
             var plaintext = "this long text is going to be a game change in the game".ToUpper();
             key = "7462315";
             transpositionCount = 6;
 
-            var solverCipher = solver.Encrypt(plaintext, key, transpositionCount);
-            var coreCipher = Encrypt(plaintext);
+            var solverCipher = plaintext;
+            var coreCipher = plaintext;
 
-            var solverPlain = solver.Decrypt(coreCipher, key, transpositionCount);
-            var newplain = Decrypt(coreCipher);
+            for (int i = 0; i < transpositionCount; i++)
+            {
+                solverCipher = solver.Encrypt(solverCipher, key);
+                coreCipher = Encrypt(coreCipher);
+            }
 
-            var encryptResult = string.Compare(coreCipher, solverCipher) == 0;
-            var decryptResult = string.Compare(newplain, solverPlain) == 0;
+            var solverPlain = coreCipher;
+            var newplain = coreCipher;
+            for (int i = 0; i < transpositionCount; i++)
+            {
+                solverPlain = solver.Decrypt(solverPlain, key);
+                newplain = Decrypt(newplain);
+            }
 
-            Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
-            Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-
-            LogFooter();
-
-            return encryptResult && decryptResult;
+            var result = new SolverResult
+            {
+                Original = plaintext,
+                Cipher = coreCipher,
+                Plain = newplain
+            };
+            return result;
         }
     }
 }

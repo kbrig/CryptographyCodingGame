@@ -1,9 +1,23 @@
 ﻿using System;
+using EncryptionCodingGame.Solver;
+
 namespace EncryptionCodingGame.Problem
 {
-    public abstract class BaseEncryptionProblem
+    public interface IEncryptionProblem
     {
-        public string PlainText { get; set; }
+        public string Encrypt(string plaintext);
+        public string Decrypt(string ciphertext);
+        public void Tool();
+        public void RunSolver(ISolver solver);
+        public void RunGame(ISolver solver);
+        public void RunCoreSolver();
+    }
+
+    public abstract class BaseEncryptionProblem<TSolver, TKey> : IEncryptionProblem
+        where TSolver : class, ISolver
+    {
+        protected abstract TSolver DefaultSolver { get; }
+        protected abstract TKey DefaultKey { get; }
 
         public abstract string Encrypt(string plaintext);
         public abstract string Decrypt(string ciphertext);
@@ -24,23 +38,111 @@ namespace EncryptionCodingGame.Problem
 
         protected virtual void _ToolSetup() { }
 
-        public void Tool()
+        protected void RunLogged(Action codeBlock)
         {
             LogHeader();
+            codeBlock();
+            LogFooter();
+        }
 
-            var choice = Tools.ReadInputOrDefault("(E)ncryption or(D)ecryption?", "E");
-            var text = Tools.ReadInputOrDefault("Please input your text:", "DEFAULT INPUT TEXT FOR TESTING");
+        protected void Log(string format, params object[] args)
+        {
+            Console.WriteLine(format, args);
+        }
 
-            _ToolSetup();
+        protected abstract SolverResult _SolverRun(TSolver solver);
 
-            switch (choice.ToUpper())
+        public void Tool()
+        {
+            RunLogged(() =>
             {
-                case "E": Console.WriteLine($"Ciphertext: {Encrypt(text)}"); break;
-                case "D": Console.WriteLine($"Plaintext: {Decrypt(text)}"); break;
-                default: break;
+                var choice = Tools.ReadInputOrDefault("(E)ncryption or(D)ecryption?", "E");
+                var text = Tools.ReadInputOrDefault("Please input your text:", "DEFAULT INPUT TEXT FOR TESTING");
+
+                _ToolSetup();
+
+                switch (choice.ToUpper())
+                {
+                    case "E": Log($"Ciphertext: {Encrypt(text)}"); break;
+                    case "D": Log($"Plaintext: {Decrypt(text)}"); break;
+                    default: break;
+                }
+            });
+        }
+
+        public virtual void RunSolver(ISolver solver)
+        {
+            var mySolver = solver as TSolver;
+            if (mySolver == null)
+            {
+                throw new TypeInitializationException(typeof(TSolver).FullName, null);
             }
 
-            LogFooter();
+            var result = _SolverRun(mySolver);
+
+            Console.WriteLine($"E({result.Original}) = {result.Cipher}");
+            Console.WriteLine($"D({result.Cipher}) = {result.Plain}");
+        }
+
+        public virtual void RunGame(ISolver solver)
+        {
+            var mySolver = solver as TSolver;
+            if (mySolver == null)
+            {
+                throw new TypeInitializationException(typeof(TSolver).FullName, null);
+            }
+
+            RunLogged(() =>
+            {
+                var solverResult = _SolverRun(mySolver);
+                var coreResult = _SolverRun(DefaultSolver);
+
+                var encryptResult = string.Compare(coreResult.Cipher, solverResult.Cipher) == 0;
+                var decryptResult = string.Compare(solverResult.Original, solverResult.Plain) == 0;
+
+                Console.WriteLine($"E ({(encryptResult ? "S" : "F")}): EXP: {coreResult.Cipher} ; RESULT: {solverResult.Cipher}");
+                Console.WriteLine($"D ({(decryptResult ? "S" : "F")}): EXP: {solverResult.Original} ; RESULT: {solverResult.Plain}");
+            });
+        }
+
+        public abstract void RunCoreSolver();
+    }
+
+    public abstract class BaseKeyEncryptionProblem<TSolver, TKey> : BaseEncryptionProblem<TSolver, TKey>
+        where TSolver : class, IKeySolver<TKey>
+    {
+        public override void RunCoreSolver()
+        {
+            RunLogged(() =>
+            {
+                var plaintext = "TEST INPUT FOR TESTS IS GOOD";
+
+                var ciphertext = this.DefaultSolver.Encrypt(plaintext, this.DefaultKey);
+                Log($"ENC({plaintext}) = {ciphertext}");
+
+                var newplain = this.DefaultSolver.Decrypt(ciphertext, this.DefaultKey);
+                Log($"DEC({ciphertext}) = {newplain}");
+            });
+        }
+    }
+
+    public abstract class BaseBlockEncryptionProblem<TSolver, TKey> : BaseEncryptionProblem<TSolver, TKey>
+        where TSolver : class, IBlockSolver<TKey>
+    {
+        public abstract int DefaultBlockSize { get; }
+
+        public override void RunCoreSolver()
+        {
+            RunLogged(() =>
+            {
+                var plaintext = "TEST INPUT FOR TESTS IS GOOD FOR BLOCK CIPHERS";
+
+                var ciphertext = this.DefaultSolver.Encrypt(plaintext, this.DefaultKey, this.DefaultBlockSize);
+                Log($"ENC({plaintext}) = {ciphertext}");
+
+                var newplain = this.DefaultSolver.Decrypt(ciphertext, this.DefaultKey, this.DefaultBlockSize);
+                Log($"DEC({ciphertext}) = {newplain}");
+            });
         }
     }
 }

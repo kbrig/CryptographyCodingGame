@@ -4,16 +4,20 @@ using EncryptionCodingGame.Solver.Core;
 
 namespace EncryptionCodingGame.Problem
 {
-    public class DESEncryptionProblem : BaseEncryptionProblem
+    public class DESEncryptionProblem : BaseKeyEncryptionProblem<IDESSolver, string>
     {
         private static readonly IDESSolver DEFAULT_SOLVER = new CoreDESSolver();
+        private const string DEFAULT_KEY = "AABB09182736CCDD";
 
         private IDESSolver solver = DEFAULT_SOLVER;
-        private string key = "AABB09182736CCDD";
-        private int blocksize = 64;
+        private string key;
 
-        public DESEncryptionProblem()
+        protected override IDESSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override string DefaultKey => DEFAULT_KEY;
+
+        public DESEncryptionProblem(string key = DEFAULT_KEY)
         {
+            this.key = key;
         }
 
         protected override void _ToolSetup()
@@ -21,41 +25,31 @@ namespace EncryptionCodingGame.Problem
             base._ToolSetup();
 
             this.key = Tools.ReadInputOrDefault("Key?", key);
-            this.blocksize = Tools.ReadInputOrDefault("Block size?", blocksize);
         }
 
         public override string Decrypt(string ciphertext)
         {
-            return solver.Decrypt(ciphertext, key, blocksize);
+            return solver.Decrypt(ciphertext, key);
         }
 
         public override string Encrypt(string plaintext)
         {
-            return solver.Encrypt(plaintext, key, blocksize);
+            return solver.Encrypt(plaintext, key);
         }
 
-        public bool RunSolver(IDESSolver solver)
+        protected override SolverResult _SolverRun(IDESSolver solver)
         {
-            if (solver == null)
+            var plaintext = "Since this is DES as a block cipher let's have a more complicated plain text to encrypt/decrypt!";
+            var cipher = solver.Encrypt(plaintext, key);
+            var plain = solver.Decrypt(cipher, key);
+
+            var result = new SolverResult
             {
-                return false;
-            }
-            LogHeader();
-            var plaintext = "GAMEPLAINTEXT".ToUpper();
-
-            var coreCipher = Encrypt(plaintext);
-            var solverCipher = solver.Encrypt(plaintext, this.key, blocksize);
-
-            var newplain = Decrypt(coreCipher);
-            var solverPlain = solver.Decrypt(coreCipher, this.key, blocksize);
-
-            var encryptResult = string.Compare(coreCipher, solverCipher) == 0;
-            var decryptResult = string.Compare(newplain, solverPlain) == 0;
-
-            Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
-            Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-            LogFooter();
-            return encryptResult && decryptResult;
+                Original = plaintext,
+                Cipher = cipher,
+                Plain = plain
+            };
+            return result;
         }
     }
 }

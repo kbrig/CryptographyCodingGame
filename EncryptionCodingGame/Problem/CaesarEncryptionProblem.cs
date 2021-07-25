@@ -4,14 +4,18 @@ using EncryptionCodingGame.Solver.Core;
 
 namespace EncryptionCodingGame.Problem
 {
-    public class CaesarEncryptionProblem : BaseEncryptionProblem
+    public class CaesarEncryptionProblem : BaseKeyEncryptionProblem<ICaesarSolver, int>
     {
         private static readonly ICaesarSolver DEFAULT_SOLVER = new CoreCaesarSolver();
+        private const int DEFAULT_KEY = 3;
 
         private int shift;
         private ICaesarSolver solver = DEFAULT_SOLVER;
 
-        public CaesarEncryptionProblem(int shift = 3)
+        protected override ICaesarSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override int DefaultKey => DEFAULT_KEY;
+
+        public CaesarEncryptionProblem(int shift = DEFAULT_KEY)
         {
             this.shift = shift;
         }
@@ -31,33 +35,21 @@ namespace EncryptionCodingGame.Problem
             this.shift = Tools.ReadInputOrDefault("Shift?", shift);
         }
 
-        public bool RunSolver(ICaesarSolver solver)
+        protected override SolverResult _SolverRun(ICaesarSolver solver)
         {
-            if (solver == null)
-            {
-                return false;
-            }
-
-            LogHeader();
-
             var plaintext = "GAMEPLAINTEXT".ToUpper();
             this.shift = 5;
 
-            var solverCipher = solver.Encrypt(plaintext, 5);
-            var coreCipher = Encrypt(plaintext);
+            var cipher = solver.Encrypt(plaintext, 5);
+            var newplain = solver.Decrypt(cipher, 5);
 
-            var solverPlain = solver.Decrypt(coreCipher, 5);
-            var newplain = Decrypt(coreCipher);
-
-            var encryptResult = String.Compare(coreCipher, solverCipher) == 0;
-            var decryptResult = String.Compare(newplain, solverPlain) == 0;
-
-            Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
-            Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-
-            LogFooter();
-
-            return encryptResult && decryptResult;
+            var result = new SolverResult
+            {
+                Original = plaintext,
+                Cipher = cipher,
+                Plain = newplain
+            };
+            return result;
         }
     }
 }

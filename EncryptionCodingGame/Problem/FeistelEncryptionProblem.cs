@@ -5,52 +5,53 @@ using EncryptionCodingGame.Solver.Core;
 
 namespace EncryptionCodingGame.Problem
 {
-    public class FeistelEncryptionProblem : BaseEncryptionProblem
+    public class FeistelEncryptionProblem : BaseBlockEncryptionProblem<IFeistelSolver, string>
     {
-        private const int BLOCK_SIZE = 4;
+        private const int DEFAULT_BLOCKSIZE = 4;
         private static readonly IFeistelSolver DEFAULT_SOLVER = new CoreFeistelSolver();
+        private const string DEFAULT_KEY = "MY SECRET KEY STAYS SECRET";
 
         private IFeistelSolver solver = DEFAULT_SOLVER;
-        private int blocksize = BLOCK_SIZE;
+        private int blocksize = DEFAULT_BLOCKSIZE;
+        private string key = DEFAULT_KEY;
+
+        public override int DefaultBlockSize => DEFAULT_BLOCKSIZE;
+        protected override IFeistelSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override string DefaultKey => DEFAULT_KEY;
 
         public override string Decrypt(string ciphertext)
         {
-            return solver.Decrypt(ciphertext, blocksize);
+            return solver.Decrypt(ciphertext, key, blocksize);
         }
 
         public override string Encrypt(string plaintext)
         {
-            return solver.Encrypt(plaintext, blocksize);
+            return solver.Encrypt(plaintext, key, blocksize);
         }
 
         protected override void _ToolSetup()
         {
             base._ToolSetup();
+            this.key = Tools.ReadInputOrDefault("Key?", key);
             this.blocksize = Tools.ReadInputOrDefault("Block size?", blocksize);
         }
 
-        public bool RunSolver(IFeistelSolver solver)
+        protected override SolverResult _SolverRun(IFeistelSolver solver)
         {
-            if (solver == null)
-            {
-                return false;
-            }
-            LogHeader();
             var plaintext = "GAMEPLAINTEXT".ToUpper();
+            var key = DEFAULT_KEY;
+            var blocksize = DefaultBlockSize;
 
-            var coreCipher = Encrypt(plaintext);
-            var solverCipher = solver.Encrypt(plaintext, blocksize);
+            var cipher = solver.Encrypt(plaintext, key, blocksize);
+            var plain = solver.Decrypt(cipher, key, blocksize);
 
-            var newplain = Decrypt(coreCipher);
-            var solverPlain = solver.Decrypt(coreCipher, blocksize);
-
-            var encryptResult = string.Compare(coreCipher, solverCipher) == 0;
-            var decryptResult = string.Compare(newplain, solverPlain) == 0;
-
-            Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
-            Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-            LogFooter();
-            return encryptResult && decryptResult;
+            var result = new SolverResult
+            {
+                Original = plaintext,
+                Cipher = cipher,
+                Plain = plain
+            };
+            return result;
         }
     }
 }

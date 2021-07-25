@@ -5,14 +5,18 @@ using EncryptionCodingGame.Solver.Core;
 namespace EncryptionCodingGame.Problem
 {
 
-    public class VigenereEncryptionProblem : BaseEncryptionProblem
+    public class VigenereEncryptionProblem : BaseKeyEncryptionProblem<IVigenereSolver, string>
     {
         private static readonly IVigenereSolver DEFAULT_SOLVER = new CoreVigenereSolver();
+        private const string DEFAULT_KEY = "DECEPTIVE";
 
         private string key;
         private IVigenereSolver solver = DEFAULT_SOLVER;
 
-        public VigenereEncryptionProblem(string key = "DECEPTIVE")
+        protected override IVigenereSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override string DefaultKey => DEFAULT_KEY;
+
+        public VigenereEncryptionProblem(string key = DEFAULT_KEY)
         {
             this.key = key;
         }
@@ -30,35 +34,24 @@ namespace EncryptionCodingGame.Problem
         protected override void _ToolSetup()
         {
             base._ToolSetup();
-
             this.key = Tools.ReadInputOrDefault("Key?", key);
         }
 
-
-        public bool RunSolver(IVigenereSolver solver)
+        protected override SolverResult _SolverRun(IVigenereSolver solver)
         {
-            if (solver == null)
-            {
-                throw new ArgumentNullException(nameof(solver));
-            }
-            LogHeader();
-
             var plaintext = "THISTEXTISNOTCHEESYENOUGH".ToUpper();
             this.key = "BRIE";
 
-            var solverCipher = solver.Encrypt(plaintext, key);
-            var coreCipher = Encrypt(plaintext);
+            var cipher = solver.Encrypt(plaintext, key);
+            var plain = solver.Decrypt(cipher, key);
 
-            var solverPlain = solver.Decrypt(coreCipher, key);
-            var newplain = Decrypt(coreCipher);
-
-            var encryptResult = String.Compare(coreCipher, solverCipher) == 0;
-            var decryptResult = String.Compare(newplain, solverPlain) == 0;
-
-            Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
-            Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-            LogFooter();
-            return encryptResult && decryptResult;
+            var result = new SolverResult
+            {
+                Original = plaintext,
+                Cipher = cipher,
+                Plain = plain
+            };
+            return result;
         }
     }
 }

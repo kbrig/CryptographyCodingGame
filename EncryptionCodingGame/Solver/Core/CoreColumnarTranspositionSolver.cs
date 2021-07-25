@@ -4,21 +4,11 @@ namespace EncryptionCodingGame.Solver.Core
 {
     public class CoreColumnarTranspositionSolver : IColumnarTranspositionSolver
     {
-        public CoreColumnarTranspositionSolver()
-        {
-        }
-
-        private void TransposeChar(ref char[] destination, int index, char c)
-        {
-            destination[index] = c;
-        }
-
         private string TransposeText(string input, string key, Action<string, int, char[], int> doTranspose)
         {
             var columnCount = key.Length;
             var buffer = new char[input.Length];
             var rowCount = input.Length / columnCount;
-
 
             for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
             {
@@ -33,26 +23,22 @@ namespace EncryptionCodingGame.Solver.Core
                 }
             }
 
-
             var output = new string(buffer);
             return output;
         }
 
-        public string Decrypt(string ciphertext, string key, uint transpositionCount)
+        public string Decrypt(string ciphertext, string key)
         {
-            for (int i = 0; i < transpositionCount; i++)
-            {
-                ciphertext = TransposeText(
-                    ciphertext,
-                    key,
-                    (input, pindex, buffer, cindex) => buffer[pindex] = input[cindex]
-                );
-            }
+            ciphertext = TransposeText(
+                ciphertext,
+                key,
+                (input, pindex, buffer, cindex) => buffer[pindex] = input[cindex]
+            );
             var output = ciphertext.TrimEnd('X');
             return output;
         }
 
-        public string Encrypt(string plaintext, string key, uint transpositionCount)
+        public string Encrypt(string plaintext, string key)
         {
             var columnCount = key.Length;
             var rowCount = plaintext.Length / columnCount;
@@ -60,17 +46,14 @@ namespace EncryptionCodingGame.Solver.Core
             {
                 rowCount++;
             }
+
             var output = plaintext.PadRight(rowCount * columnCount, 'X');
 
-            for (int i = 0; i < transpositionCount; i++)
-            {
-                output = TransposeText(
-                    output,
-                    key,
-                    (input, pindex, buffer, cindex) => buffer[cindex] = input[pindex]
-                );
-            }
-
+            output = TransposeText(
+                output,
+                key,
+                (input, pindex, buffer, cindex) => buffer[cindex] = input[pindex]
+            );
             return output;
         }
     }

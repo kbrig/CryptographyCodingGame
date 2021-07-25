@@ -7,12 +7,12 @@ namespace EncryptionCodingGame.Solver.PlayerImplementation
         {
         }
 
-        public string Decrypt(string ciphertext, int blocksize)
+        public string Decrypt(string ciphertext, string key, int blocksize)
         {
             throw new NotImplementedException();
         }
 
-        public string Encrypt(string plaintext, int blocksize)
+        public string Encrypt(string plaintext, string key, int blocksize)
         {
             throw new NotImplementedException();
         }

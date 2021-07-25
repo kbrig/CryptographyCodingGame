@@ -1,5 +1,4 @@
-﻿// Include namespace system
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -168,7 +167,7 @@ namespace EncryptionCodingGame.Solver.Core
 				return right.Concat(left);
 			}
 
-			public string Encrypt(string plaintext, string key, int blocksize)
+			public string Encrypt(string plaintext, string key)
 			{
 				int i;
 
@@ -195,7 +194,7 @@ namespace EncryptionCodingGame.Solver.Core
 				return cipherText;
 			}
 
-			public string Decrypt(string ciphertext, string key, int blocksize)
+			public string Decrypt(string ciphertext, string key)
 			{
 				var cipherBytes = Convert.FromBase64String(ciphertext);
 				var cipher = new BitArray(cipherBytes);
@@ -204,7 +203,7 @@ namespace EncryptionCodingGame.Solver.Core
 				var keys = GetKeys(key);
 
 				// initial permutation
-				cipher = Permutation(IP, cipher, blocksize);
+				cipher = Permutation(IP, cipher, 64);
 
 				// 16-rounds
 				for (var i = 15; i > -1; i--)
@@ -213,7 +212,7 @@ namespace EncryptionCodingGame.Solver.Core
 				}
 				// 32-bit swap
 				cipher = cipher.SwapHalves();
-				cipher = Permutation(IP1, cipher, blocksize);
+				cipher = Permutation(IP1, cipher, 64);
 
 				var plainBytes = cipher.ToByteArray();
 				var plaintext = Encoding.ASCII.GetString(plainBytes);
@@ -223,18 +222,14 @@ namespace EncryptionCodingGame.Solver.Core
 
 		private DES des = new DES();
 
-        public CoreDESSolver()
+        public string Decrypt(string ciphertext, string key)
         {
+			return des.Decrypt(ciphertext, key);
         }
 
-        public string Decrypt(string ciphertext, string key, int blocksize)
+        public string Encrypt(string plaintext, string key)
         {
-			return des.Decrypt(ciphertext, key, blocksize);
-        }
-
-        public string Encrypt(string plaintext, string key, int blocksize)
-        {
-			var encrypted = des.Encrypt(plaintext, key, blocksize);
+			var encrypted = des.Encrypt(plaintext, key);
 			
 			return encrypted;
         }

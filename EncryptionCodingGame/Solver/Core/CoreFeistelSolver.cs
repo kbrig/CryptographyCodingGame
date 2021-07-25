@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using EncryptionCodingGame;
 
 namespace EncryptionCodingGame.Solver.Core
 {
@@ -10,19 +9,15 @@ namespace EncryptionCodingGame.Solver.Core
     {
         private const string DUMMY_STRING_TO_TRIM = @"||<END";
         private const int ROUNDS_COUNT = 3;
-        private int secretSeed;
         private List<BitArray> keys = new List<BitArray>();
 
-        public CoreFeistelSolver()
+        private void GenerateKeys(string secret, int keyCount, int blocksize)
         {
-            var secretBytes = Encoding.ASCII.GetBytes("MYSECRETISMINE");
-            this.secretSeed = BitConverter.ToInt32(secretBytes);
-        }
+            var secretBytes = Encoding.ASCII.GetBytes(secret);
+            var seed = BitConverter.ToInt32(secretBytes);
 
-        private void GenerateKeys(int keyCount, int blocksize)
-        {
             keys.Clear();
-            var random = new Random(this.secretSeed);
+            var random = new Random(seed);
 
             for (int i = 0; i < keyCount; i++)
             {
@@ -68,7 +63,7 @@ namespace EncryptionCodingGame.Solver.Core
             return blocks;
         }
 
-        private List<BitArray> Feistel(List<BitArray> blocks, int roundsCount, int blocksize)
+        private List<BitArray> Feistel(List<BitArray> blocks, int roundsCount)
         {
             var cipherBlocks = new List<BitArray>();
 
@@ -96,16 +91,16 @@ namespace EncryptionCodingGame.Solver.Core
             return temp;
         }
 
-        public string Encrypt(string plaintext, int blocksize)
+        public string Encrypt(string plaintext, string key, int blocksize)
         {
             plaintext += DUMMY_STRING_TO_TRIM;
-            GenerateKeys(ROUNDS_COUNT, blocksize);
+            GenerateKeys(key, ROUNDS_COUNT, blocksize);
 
             // Read text as blocks
             var blocks = TextAsBlocks(plaintext, blocksize);
 
             // Run feistel cipher for ROUNDS_COUNT rounds.
-            var cipheredBlocks = Feistel(blocks, ROUNDS_COUNT, blocksize);
+            var cipheredBlocks = Feistel(blocks, ROUNDS_COUNT);
             var cipheredBits = cipheredBlocks.FuseBlocks(blocksize);
             var cipheredBytes = cipheredBits.ToByteArray();
 
@@ -113,9 +108,9 @@ namespace EncryptionCodingGame.Solver.Core
             return ciphertext;
         }
 
-        public string Decrypt(string base64CipherText, int blocksize)
+        public string Decrypt(string base64CipherText, string key, int blocksize)
         {
-            GenerateKeys(ROUNDS_COUNT, blocksize);
+            GenerateKeys(key, ROUNDS_COUNT, blocksize);
 
             var ciphertextBytes = Convert.FromBase64String(base64CipherText);
 
@@ -123,7 +118,7 @@ namespace EncryptionCodingGame.Solver.Core
             var blocks = BytesAsBlocks(ciphertextBytes, blocksize);
 
             // Run feistel cipher for ROUNDS_COUNT rounds.
-            var plainBlocks = Feistel(blocks, ROUNDS_COUNT, blocksize);
+            var plainBlocks = Feistel(blocks, ROUNDS_COUNT);
 
             // Read ciphered blocks into a string
             var plainBits = plainBlocks.FuseBlocks(blocksize);

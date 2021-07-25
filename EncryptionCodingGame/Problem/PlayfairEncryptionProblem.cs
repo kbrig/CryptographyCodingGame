@@ -4,14 +4,18 @@ using EncryptionCodingGame.Solver.Core;
 
 namespace EncryptionCodingGame.Problem
 {
-    public class PlayfairEncryptionProblem : BaseEncryptionProblem
+    public class PlayfairEncryptionProblem : BaseKeyEncryptionProblem<IPlayfairSolver, string>
     {
         private static readonly IPlayfairSolver DEFAULT_SOLVER = new CorePlayfairSolver();
+        private const string DEFAULT_KEY = "MONARCHY";
 
         private string key;
         private IPlayfairSolver solver = DEFAULT_SOLVER;
 
-        public PlayfairEncryptionProblem(string key = "MONARCHY")
+        protected override IPlayfairSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override string DefaultKey => DEFAULT_KEY;
+
+        public PlayfairEncryptionProblem(string key = DEFAULT_KEY)
         {
             this.key = key;
         }
@@ -36,29 +40,21 @@ namespace EncryptionCodingGame.Problem
             this.solver = new CorePlayfairSolver(filler);
         }
 
-        public bool RunSolver(IPlayfairSolver solver)
+        protected override SolverResult _SolverRun(IPlayfairSolver solver)
         {
-            if (solver == null)
-            {
-                throw new ArgumentNullException(nameof(solver));
-            }
-            LogHeader();
             var plaintext = "GAMEPLAINTEXT".ToUpper();
             this.key = "BRIE";
 
-            var solverCipher = solver.Encrypt(plaintext, key);
-            var coreCipher = Encrypt(plaintext);
+            var cipher = solver.Encrypt(plaintext, key);
+            var newplain = solver.Decrypt(cipher, key);
 
-            var solverPlain = solver.Decrypt(coreCipher, key);
-            var newplain = Decrypt(coreCipher);
-
-            var encryptResult = String.Compare(coreCipher, solverCipher) == 0;
-            var decryptResult = String.Compare(newplain, solverPlain) == 0;
-
-            Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
-            Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-            LogFooter();
-            return encryptResult && decryptResult;
+            var result = new SolverResult
+            {
+                Original = plaintext,
+                Cipher = cipher,
+                Plain = newplain
+            };
+            return result;
         }
     }
 }

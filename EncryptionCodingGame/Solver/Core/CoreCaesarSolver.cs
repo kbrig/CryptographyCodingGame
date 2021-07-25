@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace EncryptionCodingGame.Solver.Core
 {
-    public class CoreCaesarSolver : ICaesarSolver
+    public class CoreCaesarSolver : BaseCoreSolver<ICaesarSolver, int>, ICaesarSolver
     {
         private char[] alphabet = Enumerable.Range('A', 26).Select(c => Convert.ToChar(c)).ToArray();
 

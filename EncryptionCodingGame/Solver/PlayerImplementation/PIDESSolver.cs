@@ -1,9 +1,9 @@
 ﻿using System;
 namespace EncryptionCodingGame.Solver.PlayerImplementation
 {
-    public class PIColumnarTranspositionSolver : IColumnarTranspositionSolver
+    public class PIDESSolver : IDESSolver
     {
-        public PIColumnarTranspositionSolver()
+        public PIDESSolver()
         {
         }
 
