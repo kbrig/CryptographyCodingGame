@@ -62,7 +62,6 @@ namespace EncryptionCodingGame.Solver.Core
 
         public string Encrypt(string plaintext, uint depth)
         {
-            //plaintext = plaintext.Replace(" ", "");
             var ciphertext = "";
             var indexedDepth = depth - 1;
             var maxJump = indexedDepth * 2;
