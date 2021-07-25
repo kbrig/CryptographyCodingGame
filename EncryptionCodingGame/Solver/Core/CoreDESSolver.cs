@@ -186,8 +186,6 @@ namespace EncryptionCodingGame.Solver.Core
 
 			public string Encrypt(string plaintext, string key)
 			{
-				int i;
-
 				// get round keys
 				var keys = GetKeys(key);
 
