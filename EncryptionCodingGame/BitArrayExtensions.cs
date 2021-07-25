@@ -112,5 +112,10 @@ namespace EncryptionCodingGame
         {
             return new BitArray(Encoding.ASCII.GetBytes(s));
         }
+
+        public static string ToBase64String(this BitArray block)
+        {
+            return Convert.ToBase64String(block.ToByteArray());
+        }
     }
 }

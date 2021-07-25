@@ -43,9 +43,12 @@ namespace EncryptionCodingGame
 
         public static string ToBase64(this string s)
         {
-            var bytes = Encoding.ASCII.GetBytes(s);
-            var output = Convert.ToBase64String(bytes);
-            return output;
+            return Convert.ToBase64String(s.ToByteArray());
+        }
+
+        public static byte[] ToByteArray(this string s)
+        {
+            return Encoding.ASCII.GetBytes(s);
         }
     }
 }

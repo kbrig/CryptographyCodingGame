@@ -22,4 +22,9 @@ namespace EncryptionCodingGame.Solver
         string Decrypt(string ciphertext, TKey key, int blocksize);
     }
     public interface IFeistelSolver : IBlockSolver<string> { }
+    public interface IECBSolver : IBlockSolver<string> { }
+    public interface ICBCSolver : IBlockSolver<string> { }
+    public interface ICFBSolver : IBlockSolver<string> { }
+    public interface IOFBSolver : IBlockSolver<string> { }
+
 }

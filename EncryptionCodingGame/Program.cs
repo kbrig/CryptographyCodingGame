@@ -18,19 +18,23 @@ namespace EncryptionCodingGame
             new RailFenceEncryptionProblem(),
             new ColumnarTranspositionEncryptionProblem(),
             new FeistelEncryptionProblem(),
-            new DESEncryptionProblem()
+            new DESEncryptionProblem(),
+            new ECBEncryptionProblem(),
+            new CBCEncryptionProblem()
         };
 
         static Dictionary<Type, Func<ISolver>> SolverFactory = new Dictionary<Type, Func<ISolver>>
         {
-            { typeof(CaesarEncryptionProblem), () => new PICaesarSolver() },
-            { typeof(PlayfairEncryptionProblem), () => new PIPlayfairSolver() },
-            { typeof(VigenereEncryptionProblem), () => new PIVigenereSolver() },
-            { typeof(VernamEncryptionProblem), () => new PIVernamSolver() },
-            { typeof(RailFenceEncryptionProblem), () => new PIRailFenceSolver() },
+            { typeof(CaesarEncryptionProblem),      () => new PICaesarSolver() },
+            { typeof(PlayfairEncryptionProblem),    () => new PIPlayfairSolver() },
+            { typeof(VigenereEncryptionProblem),    () => new PIVigenereSolver() },
+            { typeof(VernamEncryptionProblem),      () => new PIVernamSolver() },
+            { typeof(RailFenceEncryptionProblem),   () => new PIRailFenceSolver() },
             { typeof(ColumnarTranspositionEncryptionProblem), () => new PIColumnarTranspositionSolver() },
-            { typeof(FeistelEncryptionProblem), () => new PIFeistelSolver() },
-            { typeof(DESEncryptionProblem), () => new PIDESSolver() },
+            { typeof(FeistelEncryptionProblem),     () => new PIFeistelSolver() },
+            { typeof(DESEncryptionProblem),         () => new PIDESSolver() },
+            { typeof(ECBEncryptionProblem),         () => new PIECBSolver() },
+            { typeof(CBCEncryptionProblem),         () => new PICBCSolver() }
         };
 
         static void Main(string[] args)
