@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace EncryptionCodingGame.Solver.Core
 {

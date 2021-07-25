@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EncryptionCodingGame.Solver.Core
+﻿namespace EncryptionCodingGame.Solver.Core
 {
     public class CoreRailFenceSolver : IRailFenceSolver
     {

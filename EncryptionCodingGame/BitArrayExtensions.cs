@@ -33,19 +33,16 @@ namespace EncryptionCodingGame
 
         public static BitArray SwapHalves(this BitArray block)
         {
-            var blocksize = block.Length;
-            var halves = block.Splice(blocksize / 2);
+            var halves = block.Splice();
             halves.Reverse();
-
-            var newBlock = halves.FuseBlocks(blocksize / 2);
-            Console.WriteLine($"{block.ToBinaryString()} => {newBlock.ToBinaryString()}");
-
-            return block;
+            var newBlock = halves.FuseBlocks();
+            //Console.WriteLine($"{block.ToBinaryString()} => {newBlock.ToBinaryString()}");
+            return newBlock;
         }
 
         public static List<BitArray> Splice(this BitArray bits, int? blocksizeOverride = null)
         {
-            Console.WriteLine($"Splicing: {bits.ToBinaryString()}");
+            //Console.WriteLine($"Splicing: {bits.ToBinaryString()}");
             var blocksize = bits.Length / 2;
             if (blocksizeOverride.HasValue)
             {
@@ -57,7 +54,7 @@ namespace EncryptionCodingGame
                 var array = bits.Subset(i, blocksize);
                 arrays.Add(array);
 
-                Console.WriteLine($"\tBlock\t{i / blocksize}: {array.ToBinaryString()}");
+                //Console.WriteLine($"\tBlock\t{i / blocksize}: {array.ToBinaryString()}");
             }
             return arrays;
         }
