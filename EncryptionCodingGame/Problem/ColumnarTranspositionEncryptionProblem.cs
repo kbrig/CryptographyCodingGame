@@ -31,11 +31,8 @@ namespace EncryptionCodingGame.Problem
 
         protected override void _ToolSetup()
         {
-            Console.Write("Please enter your key as a string composed of only numbers: ");
-            this.key = Console.ReadLine();
-
-            Console.Write("How many consecutive transpositions with this key? ");
-            this.transpositionCount = Convert.ToUInt32(Console.ReadLine());
+            this.key = Tools.ReadInputOrDefault("Please enter your key as a string composed of only numbers: ", key);
+            this.transpositionCount = Tools.ReadInputOrDefault("How many consecutive transpositions with this key? ", transpositionCount);
         }
 
         public bool RunSolver(IColumnarTranspositionSolver solver)
@@ -44,6 +41,8 @@ namespace EncryptionCodingGame.Problem
             {
                 throw new ArgumentNullException(nameof(solver));
             }
+
+            LogHeader();
 
             var plaintext = "this long text is going to be a game change in the game".ToUpper();
             key = "7462315";
@@ -60,6 +59,8 @@ namespace EncryptionCodingGame.Problem
 
             Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
             Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
+
+            LogFooter();
 
             return encryptResult && decryptResult;
         }

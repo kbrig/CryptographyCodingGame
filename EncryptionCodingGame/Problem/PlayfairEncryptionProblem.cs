@@ -30,10 +30,9 @@ namespace EncryptionCodingGame.Problem
         {
             base._ToolSetup();
 
-            Console.Write("What is your keyword (Remember: no dupplicate letters and no 'J's)? ");
-            this.key = Console.ReadLine().ToUpper();
-            Console.Write("Filler character? ");
-            var filler = Console.ReadLine()[0];
+            this.key = Tools.ReadInputOrDefault("What is your keyword (Remember: no dupplicate letters and no 'J's)? ", key);
+            var filler = Tools.ReadInputOrDefault("Filler character?", 'X');
+
             this.solver = new CorePlayfairSolver(filler);
         }
 
@@ -43,7 +42,7 @@ namespace EncryptionCodingGame.Problem
             {
                 throw new ArgumentNullException(nameof(solver));
             }
-
+            LogHeader();
             var plaintext = "GAMEPLAINTEXT".ToUpper();
             this.key = "BRIE";
 
@@ -58,7 +57,7 @@ namespace EncryptionCodingGame.Problem
 
             Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
             Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-
+            LogFooter();
             return encryptResult && decryptResult;
         }
     }

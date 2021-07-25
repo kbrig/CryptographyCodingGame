@@ -25,9 +25,8 @@ namespace EncryptionCodingGame.Problem
 
         protected override void _ToolSetup()
         {
-            Console.Write("What block size should I use? ");
-            this.blocksize = Convert.ToInt32(Console.ReadLine());
             base._ToolSetup();
+            this.blocksize = Tools.ReadInputOrDefault("Block size?", blocksize);
         }
 
         public bool RunSolver(IFeistelSolver solver)
@@ -36,7 +35,7 @@ namespace EncryptionCodingGame.Problem
             {
                 return false;
             }
-
+            LogHeader();
             var plaintext = "GAMEPLAINTEXT".ToUpper();
 
             var coreCipher = Encrypt(plaintext);
@@ -50,7 +49,7 @@ namespace EncryptionCodingGame.Problem
 
             Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
             Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-
+            LogFooter();
             return encryptResult && decryptResult;
         }
     }

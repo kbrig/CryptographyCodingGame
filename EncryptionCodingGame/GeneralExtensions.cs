@@ -1,4 +1,7 @@
-﻿namespace EncryptionCodingGame
+﻿using System;
+using System.Collections.Generic;
+
+namespace EncryptionCodingGame
 {
     public static class GeneralExtensions
     {
@@ -14,6 +17,20 @@
                 subset[i] = array[startIndex + i];
             }
             return subset;
+        }
+
+        public static bool IsNullOrEmpty(this string s)
+        {
+            return s == null || s.Length == 0;
+        }
+
+        public static T ValueIfDefault<T>(this T val, T newDefault = default(T)) where T : IConvertible
+        {
+            if (EqualityComparer<T>.Default.Equals(val, default(T)))
+            {
+                return newDefault;
+            }
+            return val;
         }
     }
 }

@@ -14,26 +14,13 @@
 
             do
             {
-                var jumpingIndex = startIndex;
-                while (jumpingIndex < ciphertext.Length)
+                for (uint i = startIndex; i < ciphertext.Length; i += isInJump ? inJump.ValueIfDefault(outJump) : outJump.ValueIfDefault(inJump))
                 {
                     var ci = ciphertext[currentIndex++];
-                    plain[jumpingIndex] = ci;
-
-                    if (inJump == 0)
-                    {
-                        jumpingIndex += outJump;
-                    }
-                    else if (outJump == 0)
-                    {
-                        jumpingIndex += inJump;
-                    }
-                    else
-                    {
-                        jumpingIndex += isInJump ? inJump : outJump;
-                        isInJump = !isInJump;
-                    }
+                    plain[i] = ci;
+                    isInJump = !isInJump;
                 }
+
                 inJump -= 2;
                 outJump += 2;
                 startIndex++;
@@ -44,15 +31,15 @@
             return plaintext;
         }
 
-        private string EncryptLine(string input, uint startIndex, uint downJump, uint upJump)
+        private string EncryptLine(string input, uint startIndex, uint inJump, uint outJump)
         {
             var output = "";
-            var isDownJump = true;
+            var isInJump = false;
 
-            for (uint i = startIndex; i < input.Length; i += isDownJump ? downJump : upJump)
+            for (uint i = startIndex; i < input.Length; i += isInJump ? inJump : outJump)
             {
                 output += input[(int)i];
-                isDownJump = !isDownJump;
+                isInJump = !isInJump;
             }
             return output;
         }
@@ -65,14 +52,14 @@
 
             for (uint i = 0; i < depth; i++)
             {
-                var down = maxJump - (i * 2);
-                var up = maxJump - ((indexedDepth - i) * 2);
+                var inJump = maxJump - (i * 2);
+                var outJump = maxJump - ((indexedDepth - i) * 2);
 
                 ciphertext += EncryptLine(
                     plaintext,
                     i,
-                    down == 0 ? maxJump : down,
-                    up == 0 ? maxJump : up);
+                    inJump.ValueIfDefault(maxJump),
+                    outJump.ValueIfDefault(maxJump));
             }
             return ciphertext;
         }

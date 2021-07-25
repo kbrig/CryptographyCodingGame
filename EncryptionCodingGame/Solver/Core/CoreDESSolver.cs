@@ -168,7 +168,7 @@ namespace EncryptionCodingGame.Solver.Core
 				return right.Concat(left);
 			}
 
-			public string Encrypt(string plaintext, string key)
+			public string Encrypt(string plaintext, string key, int blocksize)
 			{
 				int i;
 
@@ -195,7 +195,7 @@ namespace EncryptionCodingGame.Solver.Core
 				return cipherText;
 			}
 
-			public string Decrypt(string ciphertext, string key)
+			public string Decrypt(string ciphertext, string key, int blocksize)
 			{
 				var cipherBytes = Convert.FromBase64String(ciphertext);
 				var cipher = new BitArray(cipherBytes);
@@ -204,7 +204,7 @@ namespace EncryptionCodingGame.Solver.Core
 				var keys = GetKeys(key);
 
 				// initial permutation
-				cipher = Permutation(IP, cipher, 64);
+				cipher = Permutation(IP, cipher, blocksize);
 
 				// 16-rounds
 				for (var i = 15; i > -1; i--)
@@ -213,7 +213,7 @@ namespace EncryptionCodingGame.Solver.Core
 				}
 				// 32-bit swap
 				cipher = cipher.SwapHalves();
-				cipher = Permutation(IP1, cipher, 64);
+				cipher = Permutation(IP1, cipher, blocksize);
 
 				var plainBytes = cipher.ToByteArray();
 				var plaintext = Encoding.ASCII.GetString(plainBytes);
@@ -227,14 +227,14 @@ namespace EncryptionCodingGame.Solver.Core
         {
         }
 
-        public string Decrypt(string ciphertext, int blocksize)
+        public string Decrypt(string ciphertext, string key, int blocksize)
         {
-			return des.Decrypt(ciphertext, "AABB09182736CCDD");
+			return des.Decrypt(ciphertext, key, blocksize);
         }
 
-        public string Encrypt(string plaintext, int blocksize)
+        public string Encrypt(string plaintext, string key, int blocksize)
         {
-			var encrypted = des.Encrypt(plaintext, "AABB09182736CCDD");
+			var encrypted = des.Encrypt(plaintext, key, blocksize);
 			
 			return encrypted;
         }

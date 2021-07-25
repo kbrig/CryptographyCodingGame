@@ -12,29 +12,42 @@ namespace EncryptionCodingGame.Solver.Core
             string plaintext = "";
             foreach (var character in ciphertext)
             {
-                var index = character - alphabet.First();
-
-                index = (index - shift);
-                if (index < 0)
+                if (!alphabet.Contains(character))
                 {
-                    index = alphabet.Length + index;
+                    plaintext += character;
                 }
-                plaintext += alphabet[index];
+                else
+                {
+                    var index = character - alphabet.First();
+
+                    index = index - shift;
+                    if (index < 0)
+                    {
+                        index = alphabet.Length + index;
+                    }
+                    plaintext += alphabet[index];
+                }
             }
             return plaintext;
         }
 
         public string Encrypt(string plaintext, int shift)
         {
-            plaintext = plaintext.Replace(" ", "").ToUpper();
-
+            plaintext = plaintext.ToUpper();
             string ciphertext = "";
             foreach (var character in plaintext)
             {
-                var index = character - alphabet.First();
-                index = (index + shift) % alphabet.Length;
+                if (!alphabet.Contains(character))
+                {
+                    ciphertext += character;
+                }
+                else
+                {
+                    var index = character - alphabet.First();
+                    index = (index + shift) % alphabet.Length;
 
-                ciphertext += alphabet[index];
+                    ciphertext += alphabet[index];
+                }
             }
             return ciphertext;
         }

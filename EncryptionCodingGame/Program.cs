@@ -19,6 +19,7 @@ namespace EncryptionCodingGame
             new DESEncryptionProblem()
         };
 
+        [STAThread]
         static void Main(string[] args)
         {
             Console.WriteLine("Hello, let's start your code!");
@@ -41,13 +42,14 @@ namespace EncryptionCodingGame
 
         private static void TestMode()
         {
-            //(problems[0] as CaesarEncryptionProblem).RunSolver(new CoreCaesarSolver());
-            //(problems[1] as PlayfairEncryptionProblem).RunSolver(new CorePlayfairSolver());
-            //(problems[2] as VigenereEncryptionProblem).RunSolver(new CoreVigenereSolver());
-            //(problems[3] as VernamEncryptionProblem).RunSolver(new CoreVernamSolver());
-            //(problems[4] as RailFenceEncryptionProblem).RunSolver(new CoreRailFenceSolver());
-            //(problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new CoreColumnarTranspositionSolver());
-            //(problems[6] as FeistelEncryptionProblem).RunSolver(new CoreFeistelSolver());
+            (problems[0] as CaesarEncryptionProblem).RunSolver(new CoreCaesarSolver());
+            (problems[1] as PlayfairEncryptionProblem).RunSolver(new CorePlayfairSolver());
+            (problems[2] as VigenereEncryptionProblem).RunSolver(new CoreVigenereSolver());
+            (problems[3] as VernamEncryptionProblem).RunSolver(new CoreVernamSolver());
+            (problems[4] as RailFenceEncryptionProblem).RunSolver(new CoreRailFenceSolver());
+            (problems[5] as ColumnarTranspositionEncryptionProblem).RunSolver(new CoreColumnarTranspositionSolver());
+            (problems[6] as FeistelEncryptionProblem).RunSolver(new CoreFeistelSolver());
+            (problems[7] as DESEncryptionProblem).RunSolver(new CoreDESSolver());
         }
 
         private static void GameMode()

@@ -28,10 +28,7 @@ namespace EncryptionCodingGame.Problem
 
         protected override void _ToolSetup()
         {
-            Console.Write("What rail depth? ");
-            var railDepth = Convert.ToUInt32(Console.ReadLine());
-
-            this.depth = railDepth;
+            this.depth = Tools.ReadInputOrDefault("Rail depth?", depth);
         }
 
         public bool RunSolver(IRailFenceSolver solver)
@@ -40,7 +37,7 @@ namespace EncryptionCodingGame.Problem
             {
                 throw new ArgumentNullException(nameof(solver));
             }
-
+            LogHeader();
             var plaintext = "this long text is going to be a game change in the game".ToUpper();
             this.depth = 5;
 
@@ -55,7 +52,7 @@ namespace EncryptionCodingGame.Problem
 
             Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
             Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-
+            LogFooter();
             return encryptResult && decryptResult;
         }
     }

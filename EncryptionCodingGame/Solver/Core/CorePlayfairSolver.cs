@@ -16,15 +16,23 @@ namespace EncryptionCodingGame.Solver.Core
 
         private void PrintTable()
         {
-            Console.WriteLine(@"Cipher Table:");
+            Console.WriteLine("-----------------");
+            Console.WriteLine("| Cipher  Table |");
+            Console.WriteLine("-----------------");
+
             for (int i = 0; i < orderedValues.Length; i++)
             {
-                Console.Write($"{orderedValues[i]} ");
+                if (i % ROW_LENGTH == 0)
+                {
+                    Console.Write($"|");
+                }
+                Console.Write($" {orderedValues[i]} ");
                 if (i % ROW_LENGTH == ROW_LENGTH - 1)
                 {
-                    Console.Write(Environment.NewLine);
+                    Console.WriteLine($"|");
                 }
             }
+            Console.WriteLine("-----------------");
         }
 
         private void InitTable(string key)
@@ -37,7 +45,7 @@ namespace EncryptionCodingGame.Solver.Core
                                              .Where(c => !ignore.Contains(c))
                                              .ToArray();
             Array.Copy(remainingLetters, 0, orderedValues, key.Length, remainingLetters.Length);
-            //PrintTable();
+            PrintTable();
         }
 
         public string Decrypt(string ciphertext, string key)

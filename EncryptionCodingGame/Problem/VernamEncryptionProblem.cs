@@ -26,13 +26,20 @@ namespace EncryptionCodingGame.Problem
             return solver.Encrypt(plaintext, this.key);
         }
 
+        protected override void _ToolSetup()
+        {
+            base._ToolSetup();
+
+            this.key = Tools.ReadInputOrDefault("Key?", key);
+        }
+
         public bool RunSolver(IVernamSolver solver)
         {
             if (solver == null)
             {
                 throw new ArgumentNullException(nameof(solver));
             }
-
+            LogHeader();
             var plaintext = "GAMEPLAINTEXT".ToUpper();
             this.key = "BRIE";
 
@@ -47,7 +54,7 @@ namespace EncryptionCodingGame.Problem
 
             Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
             Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
-
+            LogFooter();
             return encryptResult && decryptResult;
         }
     }

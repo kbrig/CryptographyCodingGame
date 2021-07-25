@@ -32,8 +32,6 @@ namespace EncryptionCodingGame.Solver.Core
                 {
                     key[j] = random.Next() % 2 == 0;
                 }
-                Console.WriteLine($"Key {i + 1}: {key.ToBinaryString()}");
-                
                 keys.Add(key);
             }
         }

@@ -10,12 +10,15 @@ namespace EncryptionCodingGame.Problem
 
         protected virtual void LogHeader()
         {
-            Console.WriteLine($"=== Running {this.GetType().Name} ===");
+            string line = Tools.MultiplyChar('=', 50);
+            Console.WriteLine(line);
+            Console.WriteLine($"= [ {this.GetType().Name,-42} ] =");
+            Console.WriteLine(line);
         }
 
         protected virtual void LogFooter()
         {
-            Console.WriteLine("".PadLeft(36, '='));
+            Console.WriteLine(Tools.MultiplyChar('=', 50));
             Console.WriteLine();
         }
 
@@ -23,20 +26,21 @@ namespace EncryptionCodingGame.Problem
 
         public void Tool()
         {
-            Console.Write("(E)ncryption or (D)ecryption? ");
-            var choice = Console.ReadLine().ToUpper();
+            LogHeader();
 
-            Console.Write("Please input your text: ");
-            var text = Console.ReadLine();
+            var choice = Tools.ReadInputOrDefault("(E)ncryption or(D)ecryption?", "E");
+            var text = Tools.ReadInputOrDefault("Please input your text:", "DEFAULT INPUT TEXT FOR TESTING");
 
             _ToolSetup();
 
-            switch (choice)
+            switch (choice.ToUpper())
             {
                 case "E": Console.WriteLine($"Ciphertext: {Encrypt(text)}"); break;
                 case "D": Console.WriteLine($"Plaintext: {Decrypt(text)}"); break;
                 default: break;
             }
+
+            LogFooter();
         }
     }
 }

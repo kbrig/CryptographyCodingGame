@@ -28,8 +28,7 @@ namespace EncryptionCodingGame.Problem
 
         protected override void _ToolSetup()
         {
-            Console.Write("Shift? ");
-            this.shift = Convert.ToInt32(Console.ReadLine().Trim());
+            this.shift = Tools.ReadInputOrDefault("Shift?", shift);
         }
 
         public bool RunSolver(ICaesarSolver solver)
@@ -38,6 +37,8 @@ namespace EncryptionCodingGame.Problem
             {
                 return false;
             }
+
+            LogHeader();
 
             var plaintext = "GAMEPLAINTEXT".ToUpper();
             this.shift = 5;
@@ -53,6 +54,8 @@ namespace EncryptionCodingGame.Problem
 
             Console.WriteLine($"ENC ({(encryptResult ? "S" : "F")}): EXP: {coreCipher} ; RESULT: {solverCipher}");
             Console.WriteLine($"DEC ({(decryptResult ? "S" : "F")}): EXP: {newplain} ; RESULT: {solverPlain}");
+
+            LogFooter();
 
             return encryptResult && decryptResult;
         }
