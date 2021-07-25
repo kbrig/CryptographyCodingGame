@@ -118,10 +118,10 @@ namespace EncryptionCodingGame.Problem
                 var plaintext = "TEST INPUT FOR TESTS IS GOOD";
 
                 var ciphertext = this.DefaultSolver.Encrypt(plaintext, this.DefaultKey);
-                Log($"ENC({plaintext}) = {ciphertext}");
+                Log($"E({plaintext}) = {ciphertext}");
 
                 var newplain = this.DefaultSolver.Decrypt(ciphertext, this.DefaultKey);
-                Log($"DEC({ciphertext}) = {newplain}");
+                Log($"D({ciphertext}) = {newplain}");
             });
         }
     }
@@ -138,10 +138,10 @@ namespace EncryptionCodingGame.Problem
                 var plaintext = "TEST INPUT FOR TESTS IS GOOD FOR BLOCK CIPHERS";
 
                 var ciphertext = this.DefaultSolver.Encrypt(plaintext, this.DefaultKey, this.DefaultBlockSize);
-                Log($"ENC({plaintext}) = {ciphertext}");
+                Log($"E({plaintext}) = {ciphertext}");
 
                 var newplain = this.DefaultSolver.Decrypt(ciphertext, this.DefaultKey, this.DefaultBlockSize);
-                Log($"DEC({ciphertext}) = {newplain}");
+                Log($"D({ciphertext}) = {newplain}");
             });
         }
     }

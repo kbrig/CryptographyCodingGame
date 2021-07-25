@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace EncryptionCodingGame
 {
@@ -59,7 +60,7 @@ namespace EncryptionCodingGame
         {
             var output = new BitArray(length);
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < length && startIndex + i < bits.Length; i++)
             {
                 output[i] = bits[startIndex + i];
             }
@@ -105,6 +106,11 @@ namespace EncryptionCodingGame
         {
             var blocks = new List<BitArray> { blockA, blockB };
             return blocks.FuseBlocks();
+        }
+
+        public static BitArray ToBitArray(this string s)
+        {
+            return new BitArray(Encoding.ASCII.GetBytes(s));
         }
     }
 }

@@ -78,10 +78,10 @@ namespace EncryptionCodingGame.Solver.Core
 
 			// per-mutate input hexadecimal
 			// according to specified sequence
-			public BitArray Permutation(int[] sequence, BitArray input, int n)
+			public BitArray Permutation(int[] sequence, BitArray input, int size)
 			{
-				var output = new BitArray(n);
-				for (var i = 0; i < n; i++)
+				var output = new BitArray(size);
+				for (var i = 0; i < size; i++)
 				{
 					output[i] = input[sequence[i] - 1];
 				}
@@ -146,7 +146,6 @@ namespace EncryptionCodingGame.Solver.Core
 
 			public BitArray Round(BitArray input, BitArray key)
 			{
-				// fk
 				var parts = input.Splice();
 				var left = parts[0];
 				var right = parts[1];
@@ -167,19 +166,12 @@ namespace EncryptionCodingGame.Solver.Core
 				return right.Concat(left);
 			}
 
-			public string Encrypt(string plaintext, string key)
-			{
-				int i;
-
-				// get round keys
-				var keys = GetKeys(key);
-
-				// initial permutation
-				var plain = new BitArray(Encoding.ASCII.GetBytes(plaintext));
+			private BitArray EncryptBlock(BitArray plain, List<BitArray> keys)
+            {
 				plain = Permutation(IP, plain, 64);
 
 				// 16 rounds
-				for (i = 0; i < 16; i++)
+				for (var i = 0; i < keys.Count; i++)
 				{
 					plain = Round(plain, keys[i]);
 				}
@@ -189,19 +181,33 @@ namespace EncryptionCodingGame.Solver.Core
 
 				// final permutation
 				plain = Permutation(IP1, plain, 64);
-
-				var cipherText = Convert.ToBase64String(plain.ToByteArray());
-				return cipherText;
+				return plain;
 			}
 
-			public string Decrypt(string ciphertext, string key)
+			public string Encrypt(string plaintext, string key)
 			{
-				var cipherBytes = Convert.FromBase64String(ciphertext);
-				var cipher = new BitArray(cipherBytes);
+				int i;
 
 				// get round keys
 				var keys = GetKeys(key);
 
+				// initial permutation
+				var plain = plaintext.ToBitArray();
+				var blocks = plain.Splice(64);
+				var cipheredBlocks = new List<BitArray>();
+
+                foreach (var block in blocks)
+                {
+					cipheredBlocks.Add(EncryptBlock(block, keys));
+                }
+
+				var cipher = cipheredBlocks.FuseBlocks();
+				var cipherText = Convert.ToBase64String(cipher.ToByteArray());
+				return cipherText;
+			}
+
+			private BitArray DecryptBlock(BitArray cipher, List<BitArray> keys)
+            {
 				// initial permutation
 				cipher = Permutation(IP, cipher, 64);
 
@@ -213,8 +219,26 @@ namespace EncryptionCodingGame.Solver.Core
 				// 32-bit swap
 				cipher = cipher.SwapHalves();
 				cipher = Permutation(IP1, cipher, 64);
+				return cipher;
+			}
 
-				var plainBytes = cipher.ToByteArray();
+			public string Decrypt(string ciphertext, string key)
+			{
+				var cipherBytes = Convert.FromBase64String(ciphertext);
+				var cipher = new BitArray(cipherBytes);
+
+				// get round keys
+				var keys = GetKeys(key);
+				var blocks = cipher.Splice(64);
+				var plainBlocks = new List<BitArray>();
+
+                foreach (var block in blocks)
+                {
+					plainBlocks.Add(DecryptBlock(block, keys));
+                }
+
+				var plain = plainBlocks.FuseBlocks();
+				var plainBytes = plain.ToByteArray();
 				var plaintext = Encoding.ASCII.GetString(plainBytes);
 				return plaintext;
 			}

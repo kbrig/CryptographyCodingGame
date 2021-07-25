@@ -29,8 +29,6 @@ namespace EncryptionCodingGame.Solver.Core
                     key[j] = random.Next() % 2 == 1;
                 }
                 keys.Add(key);
-
-                Console.WriteLine($"\t Key {i}: {key.ToBinaryString()}");
             }
         }
 
@@ -82,9 +80,6 @@ namespace EncryptionCodingGame.Solver.Core
                 var tmpLeft = new BitArray(left);
                 var tmpRound = RoundFunction(right, key);
                 var tmpRight = tmpLeft.Xor(tmpRound);
-
-                Console.Write($"R{i} = {left.ToBinaryString()} ^ F({right.ToBinaryString()},{key.ToBinaryString()}) = {left.ToBinaryString()} ^ {tmpRound.ToBinaryString()} = ");
-                Console.WriteLine(tmpRight.ToBinaryString());
 
                 left = right;
                 right = tmpRight;
