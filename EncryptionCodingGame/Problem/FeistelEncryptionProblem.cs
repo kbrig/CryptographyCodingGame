@@ -7,7 +7,7 @@ namespace EncryptionCodingGame.Problem
 {
     public class FeistelEncryptionProblem : BaseBlockEncryptionProblem<IFeistelSolver, string>
     {
-        private const int DEFAULT_BLOCKSIZE = 4;
+        private const int DEFAULT_BLOCKSIZE = 8;
         private static readonly IFeistelSolver DEFAULT_SOLVER = new CoreFeistelSolver();
         private const string DEFAULT_KEY = "MY SECRET KEY STAYS SECRET";
 
