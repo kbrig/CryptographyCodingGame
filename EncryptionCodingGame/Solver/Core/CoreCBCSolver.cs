@@ -10,20 +10,11 @@ namespace EncryptionCodingGame.Solver.Core
     {
         public string Decrypt(string ciphertext, string key, int blocksize)
         {
-            var cipher = Convert.FromBase64String(ciphertext).ToBitArray();
-            var blocks = cipher.Splice(blocksize);
+            var blocks = ciphertext.ToBitArrays(blocksize, isBase64: true, addPadding: false);
 
-            var keyBytes = key.ToByteArray();
-            var seed = keyBytes.Sum(x => x);
-            var random = new Random(seed);
-            var cipherkeyBytes = new byte[blocksize];
-            var vectorbytes = new byte[blocksize];
-            random.NextBytes(cipherkeyBytes);
-            random.NextBytes(vectorbytes);
-
-            var keyblock = new BitArray(cipherkeyBytes);
-            var ivblock = new BitArray(vectorbytes);
-            keyblock.Length = ivblock.Length = blocksize;
+            var random = Tools.GetSeededRandomFromKeyString(key);
+            var keyblock = random.NextBitArray(blocksize);
+            var ivblock = random.NextBitArray(blocksize);
 
             var plainBlocks = new List<BitArray>();
             var lastCipher = ivblock;
@@ -33,17 +24,14 @@ namespace EncryptionCodingGame.Solver.Core
 
                 // 𝐷(𝐾,𝐶𝑖)⊕𝐶𝑖−1 where C0 = IV
                 var tmp = DecryptFunction(cipherBlock, keyblock);
-                var plainBlock = new BitArray(tmp).Xor(lastCipher);
+                var plainBlock = tmp.Xor(lastCipher);
 
                 plainBlocks.Add(plainBlock);
 
                 lastCipher = new BitArray(blocks[i]);
             }
 
-            var plain = plainBlocks.Fuse();
-            var plainbytes = plain.ToByteArray();
-            var plaintext = Encoding.ASCII.GetString(plainbytes);
-            return plaintext;
+            return plainBlocks.ConvertToString();
         }
 
         private BitArray DecryptFunction(BitArray block, BitArray key)
@@ -58,20 +46,11 @@ namespace EncryptionCodingGame.Solver.Core
 
         public string Encrypt(string plaintext, string key, int blocksize)
         {
-            var plain = plaintext.ToBitArray();
-            var blocks = plain.Splice(blocksize);
+            var blocks = plaintext.ToBitArrays(blocksize, addPadding: false);
 
-            var keyBytes = key.ToByteArray();
-            var seed = keyBytes.Sum(x => x);
-            var random = new Random(seed);
-            var cipherkeyBytes = new byte[blocksize];
-            var vectorbytes = new byte[blocksize];
-            random.NextBytes(cipherkeyBytes);
-            random.NextBytes(vectorbytes);
-
-            var keyblock = new BitArray(cipherkeyBytes);
-            var ivblock = new BitArray(vectorbytes);
-            keyblock.Length = ivblock.Length = blocksize;
+            var random = Tools.GetSeededRandomFromKeyString(key);
+            var keyblock = random.NextBitArray(blocksize);
+            var ivblock = random.NextBitArray(blocksize);
 
             var cipherBlocks = new List<BitArray>();
             var lastCipher = ivblock;
@@ -87,8 +66,7 @@ namespace EncryptionCodingGame.Solver.Core
                 lastCipher = new BitArray(cipherBlock);
             }
 
-            var cipher = cipherBlocks.Fuse();
-            return cipher.ToBase64String();
+            return cipherBlocks.ConvertToString(isBase64: true);
         }
     }
 }

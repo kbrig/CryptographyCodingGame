@@ -224,7 +224,7 @@ namespace EncryptionCodingGame
             return Encoding.ASCII.GetString(bytes);
         }
 
-        public static string TranslateToString(this List<BitArray> blocks, bool isBase64 = false)
+        public static string ConvertToString(this List<BitArray> blocks, bool isBase64 = false)
         {
             return blocks.Fuse().GetString(isBase64);
         }

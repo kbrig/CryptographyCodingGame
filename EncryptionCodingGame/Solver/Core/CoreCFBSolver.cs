@@ -6,14 +6,12 @@ using System.Text;
 
 namespace EncryptionCodingGame.Solver.Core
 {
-
     /*
-
-    Encryption:         Decryption:	
-    𝐼1=IV	            𝐼1=IV	
-    𝐼𝑖=LSB𝑏−𝑠(𝐼𝑖−1)∥𝐶𝑖−1	𝐼𝑖=LSB𝑏−𝑠(𝐼𝑖−1)∥𝐶𝑖−1	for 𝑖=2,…,𝑁
-    𝑂𝑖=𝐸(𝐾,𝐼𝑖)	        𝑂𝑖=𝐸(𝐾,𝐼𝑖)	        for 𝑖=1,…,𝑁
-    𝐶𝑖=𝑃𝑖⊕MSB𝑠(𝑂𝑖)	    𝑃𝑖=𝐶𝑖⊕MSB𝑠(𝑂𝑖)	    for 𝑖=1,…,𝑁 
+        Encryption:         Decryption:	
+        𝐼1=IV	            𝐼1=IV	
+        𝐼𝑖=LSB𝑏−𝑠(𝐼𝑖−1)∥𝐶𝑖−1	𝐼𝑖=LSB𝑏−𝑠(𝐼𝑖−1)∥𝐶𝑖−1	for 𝑖=2,…,𝑁
+        𝑂𝑖=𝐸(𝐾,𝐼𝑖)	        𝑂𝑖=𝐸(𝐾,𝐼𝑖)	        for 𝑖=1,…,𝑁
+        𝐶𝑖=𝑃𝑖⊕MSB𝑠(𝑂𝑖)	    𝑃𝑖=𝐶𝑖⊕MSB𝑠(𝑂𝑖)	    for 𝑖=1,…,𝑁 
     */
     public class CoreCFBSolver : ICFBSolver
     {
@@ -29,12 +27,10 @@ namespace EncryptionCodingGame.Solver.Core
         /// <returns></returns>
         public string Decrypt(string ciphertext, string key, int blocksize)
         {
-            var cipher = ciphertext.ToBitArray(isBase64: true);
-            var cipherBlocks = cipher.Splice(blocksize);
+            var cipherBlocks = ciphertext.ToBitArrays(blocksize, isBase64: true);
 
             var random = Tools.GetSeededRandomFromKeyString(key);
             var ivblock = random.NextBitArray(blocksize + 1);
-
 
             var nextInput = ivblock;
             var plainBlocks = new List<BitArray>();
@@ -51,11 +47,7 @@ namespace EncryptionCodingGame.Solver.Core
                 var IiLSBs = Ii.LeastSignificantBits();
                 nextInput = IiLSBs.Collate(Ci);
             }
-
-            var plain = plainBlocks.Fuse();
-            var plainBytes = plain.ToByteArray();
-            var cipherText = Encoding.ASCII.GetString(plainBytes);
-            return cipherText;
+            return plainBlocks.ConvertToString();
         }
 
 
@@ -72,9 +64,7 @@ namespace EncryptionCodingGame.Solver.Core
         /// <returns></returns>
         public string Encrypt(string plaintext, string key, int blocksize)
         {
-            var plain = plaintext.ToBitArray();
-
-            var plainBlocks = plain.Splice(blocksize);
+            var plainBlocks = plaintext.ToBitArrays(blocksize);
 
             var random = Tools.GetSeededRandomFromKeyString(key);
             var ivblock = random.NextBitArray(blocksize + 1);
@@ -94,10 +84,7 @@ namespace EncryptionCodingGame.Solver.Core
 
                 nextInput = Ii.LeastSignificantBits(1).Collate(cipherBlock);
             }
-
-            var cipher = cipherBlocks.Fuse();
-            var cipherText = cipher.ToBase64String();
-            return cipherText;
+            return cipherBlocks.ConvertToString(isBase64: true);
         }
 
         private BitArray EncryptBlock(BitArray block)

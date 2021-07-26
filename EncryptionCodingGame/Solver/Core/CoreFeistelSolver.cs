@@ -44,9 +44,7 @@ namespace EncryptionCodingGame.Solver.Core
 
         private BitArray RoundFunction(BitArray block, BitArray key)
         {
-            var tmp = new BitArray(block);
-            tmp.Xor(key);
-            return tmp;
+            return new BitArray(block).Xor(key);
         }
 
         public string Encrypt(string plaintext, string key, int blocksize)
@@ -65,7 +63,7 @@ namespace EncryptionCodingGame.Solver.Core
                 cipheredBlocks.Add(cipheredBlock);
             }
             
-            return cipheredBlocks.TranslateToString(isBase64: true);
+            return cipheredBlocks.ConvertToString(isBase64: true);
         }
 
         public string Decrypt(string base64CipherText, string key, int blocksize)
@@ -85,7 +83,7 @@ namespace EncryptionCodingGame.Solver.Core
             }
 
             // Read ciphered blocks into a string
-            var plaintext = plainBlocks.TranslateToString();
+            var plaintext = plainBlocks.ConvertToString();
 
             // Return string
             return plaintext.Split(DUMMY_STRING_TO_TRIM)[0];

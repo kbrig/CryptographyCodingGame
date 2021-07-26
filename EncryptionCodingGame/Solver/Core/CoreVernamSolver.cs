@@ -1,26 +1,38 @@
-﻿namespace EncryptionCodingGame.Solver.Core
+﻿using System.Text;
+
+namespace EncryptionCodingGame.Solver.Core
 {
     public class CoreVernamSolver : IVernamSolver
     {
-        private string DoVernam(string inText, string key)
+        private byte[] DoVernam(byte[] inText, byte[] key)
         {
-            string outText = string.Empty;
+            var output = new byte[inText.Length];
 
             for (int i = 0; i < inText.Length; i++)
             {
-                outText += (char)(inText[i] ^ key[i % key.Length]);
+                output[i] = (byte)(inText[i] ^ key[i % key.Length]);
             }
-            return outText;
+            return output;
         }
 
         public string Decrypt(string ciphertext, string key)
         {
-            return DoVernam(GeneralExtensions.FromBase64String(ciphertext), key);
+            var cipherBytes = ciphertext.ToByteArray(isBase64: true);
+            var keyBytes = key.ToByteArray();
+
+            var vernamedBytes = DoVernam(cipherBytes, keyBytes);
+
+            return Encoding.ASCII.GetString(vernamedBytes);
         }
 
         public string Encrypt(string plaintext, string key)
         {
-            return DoVernam(plaintext, key).ToBase64String();
+            var plainBytes = plaintext.ToByteArray();
+            var keyBytes = key.ToByteArray();
+
+            var vernamedBytes = DoVernam(plainBytes, keyBytes);
+
+            return vernamedBytes.ToBase64String();
         }
     }
 }

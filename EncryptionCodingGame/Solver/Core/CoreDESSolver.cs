@@ -195,7 +195,7 @@ namespace EncryptionCodingGame.Solver.Core
 					var cipherBlock = EncryptBlock(block, keys);
 					cipheredBlocks.Add(cipherBlock);
 				}
-				return cipheredBlocks.TranslateToString(isBase64: true);
+				return cipheredBlocks.ConvertToString(isBase64: true);
 			}
 
 			private BitArray DecryptBlock(BitArray cipher, List<BitArray> keys)
@@ -227,7 +227,7 @@ namespace EncryptionCodingGame.Solver.Core
 					var plainBlock = DecryptBlock(cipherBlock, keys);
 					plainBlocks.Add(plainBlock);
                 }
-				return plainBlocks.TranslateToString();
+				return plainBlocks.ConvertToString();
 			}
 		}
 

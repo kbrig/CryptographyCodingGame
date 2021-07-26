@@ -10,39 +10,28 @@ namespace EncryptionCodingGame.Solver.Core
         public string Decrypt(string ciphertext, string key, int blocksize)
         {
             var keyBits = key.ToBitArray();
-            var cipher = ciphertext.ToBitArray(isBase64: true);
-
             keyBits.Length = blocksize;
-            var blocks = cipher.Splice(blocksize);
 
+            var blocks = ciphertext.ToBitArrays(blocksize);
             foreach (var block in blocks)
             {
                 block.Xor(keyBits);
             }
-
-            var plain = blocks.Fuse();
-            var plainBytes = plain.ToByteArray();
-            var plaintext = Encoding.ASCII.GetString(plainBytes);
-            return plaintext;
+            return blocks.ConvertToString();
         }
 
         public string Encrypt(string plaintext, string key, int blocksize)
         {
             var keyBits = key.ToBitArray();
-            var plain = plaintext.ToBitArray();
-
             keyBits.Length = blocksize;
-            var blocks = plain.Splice(blocksize);
+
+            var blocks = plaintext.ToBitArrays(blocksize);
             
             foreach (var block in blocks)
             {
                 block.Xor(keyBits);
             }
-
-            var cipher = blocks.Fuse();
-            var cipherBytes = cipher.ToByteArray();
-            var cipherText = Convert.ToBase64String(cipherBytes);
-            return cipherText;
+            return blocks.ConvertToString(isBase64: true);
         }
     }
 }
