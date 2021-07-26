@@ -20,7 +20,7 @@ namespace EncryptionCodingGame.Solver.Core
                 block.Xor(keyBits);
             }
 
-            var plain = blocks.FuseBlocks();
+            var plain = blocks.Fuse();
             var plainBytes = plain.ToByteArray();
             var plaintext = Encoding.ASCII.GetString(plainBytes);
             return plaintext;
@@ -39,7 +39,7 @@ namespace EncryptionCodingGame.Solver.Core
                 block.Xor(keyBits);
             }
 
-            var cipher = blocks.FuseBlocks();
+            var cipher = blocks.Fuse();
             var cipherBytes = cipher.ToByteArray();
             var cipherText = Convert.ToBase64String(cipherBytes);
             return cipherText;

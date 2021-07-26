@@ -50,7 +50,7 @@ namespace EncryptionCodingGame
         {
             var halves = block.Splice();
             halves.Reverse();
-            var newBlock = halves.FuseBlocks();
+            var newBlock = halves.Fuse();
             return newBlock;
         }
 
@@ -81,7 +81,7 @@ namespace EncryptionCodingGame
             return output;
         }
 
-        public static BitArray FuseBlocks(this IEnumerable<BitArray> blocks, int? blocksizeOverride = null)
+        public static BitArray Fuse(this IEnumerable<BitArray> blocks, int? blocksizeOverride = null)
         {
             if (blocks == null)
             {
@@ -119,7 +119,7 @@ namespace EncryptionCodingGame
         public static BitArray Concat(this BitArray blockA, BitArray blockB)
         {
             var blocks = new List<BitArray> { blockA, blockB };
-            return blocks.FuseBlocks();
+            return blocks.Fuse();
         }
 
         public static BitArray ToBitArray(this string s)

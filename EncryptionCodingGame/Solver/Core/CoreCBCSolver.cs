@@ -40,7 +40,7 @@ namespace EncryptionCodingGame.Solver.Core
                 lastCipher = new BitArray(blocks[i]);
             }
 
-            var plain = plainBlocks.FuseBlocks();
+            var plain = plainBlocks.Fuse();
             var plainbytes = plain.ToByteArray();
             var plaintext = Encoding.ASCII.GetString(plainbytes);
             return plaintext;
@@ -87,7 +87,7 @@ namespace EncryptionCodingGame.Solver.Core
                 lastCipher = new BitArray(cipherBlock);
             }
 
-            var cipher = cipherBlocks.FuseBlocks();
+            var cipher = cipherBlocks.Fuse();
             return cipher.ToBase64String();
         }
     }

@@ -199,7 +199,7 @@ namespace EncryptionCodingGame.Solver.Core
 					cipheredBlocks.Add(EncryptBlock(block, keys));
                 }
 
-				var cipher = cipheredBlocks.FuseBlocks();
+				var cipher = cipheredBlocks.Fuse();
 				var cipherText = Convert.ToBase64String(cipher.ToByteArray());
 				return cipherText;
 			}
@@ -235,7 +235,7 @@ namespace EncryptionCodingGame.Solver.Core
 					plainBlocks.Add(DecryptBlock(block, keys));
                 }
 
-				var plain = plainBlocks.FuseBlocks();
+				var plain = plainBlocks.Fuse();
 				var plainBytes = plain.ToByteArray();
 				var plaintext = Encoding.ASCII.GetString(plainBytes);
 				return plaintext;
