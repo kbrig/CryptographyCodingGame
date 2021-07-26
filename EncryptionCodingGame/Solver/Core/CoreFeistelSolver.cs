@@ -14,50 +14,14 @@ namespace EncryptionCodingGame.Solver.Core
 
         private void GenerateKeys(string secret, int keyCount, int blocksize)
         {
-            keys.Clear();
-
-            var secretBytes = Encoding.ASCII.GetBytes(secret);
-            var seed = secretBytes.Sum(x => x);
-            var random = new Random(seed);
-
-            for (int i = 0; i < keyCount; i++)
-            {
-                var key = new BitArray(blocksize / 2);
-
-                for (int j = 0; j < key.Length; j++)
-                {
-                    key[j] = random.Next() % 2 == 1;
-                }
-                keys.Add(key);
-            }
-        }
-
-        /// <summary>
-        /// Returns key for round i
-        /// </summary>
-        /// <param name="round">Which round of encryption are we in? (starts at 0 for round 1)</param>
-        /// <returns>The key as a long</returns>
-        private BitArray GetKeyForRound(int round)
-        {
-            return keys[round];
-        }
-
-        /// <summary>
-        /// Converts input text as a two-dimensional byte array
-        /// </summary>
-        /// <param name="text">Text to convert</param>
-        /// <param name="blocksize">size of blocks (in bits)</param>
-        /// <returns>List of blocks</returns>
-        private List<BitArray> TextAsBlocks(string text, int blocksize)
-        {
-            var textBytes = Encoding.ASCII.GetBytes(text);
-            return textBytes.ToBitArray().Splice(blocksize);
+            keys = Tools.GetSeededRandomFromKeyString(secret)
+                        .NextBitArrays(blocksize / 2, keyCount);
         }
 
         private BitArray Feistel(BitArray block, int roundsCount)
         {
-            var left = block.MostSignificantBit(block.Length / 2);          // RIGHTMOST IN MEMORY
-            var right = block.LeastSignificantBit(block.Length / 2);        // LEFTMOST IN MEMORY
+            var left = block.MostSignificantBits(block.Length / 2);          // RIGHTMOST IN MEMORY
+            var right = block.LeastSignificantBits(block.Length / 2);        // LEFTMOST IN MEMORY
 
             for (int i = 0; i < roundsCount; i++)
             {
@@ -65,16 +29,16 @@ namespace EncryptionCodingGame.Solver.Core
                  * Li+1 = Ri
                  * Ri+1 = Li ^ F(REi ; Ki)
                  */
-                var key = GetKeyForRound(i);
-                var tmpLeft = new BitArray(left);
+                var key = keys[i];
+                var Li = right;
                 var tmpRound = RoundFunction(right, key);
-                var tmpRight = tmpLeft.Xor(tmpRound);
+                var Ri = new BitArray(left).Xor(tmpRound);
 
-                left = right;
-                right = tmpRight;
+                left = Li;
+                right = Ri;
             }
 
-            var cipherBlock = new BitArray(left).Collate(right); // RIGHTMOST BITS + LEFTMOST BITS
+            var cipherBlock = new BitArray(right).Collate(left); // RIGHTMOST BITS + LEFTMOST BITS
             return cipherBlock;
         }
 
@@ -91,19 +55,17 @@ namespace EncryptionCodingGame.Solver.Core
             GenerateKeys(key, ROUNDS_COUNT, blocksize);
 
             // Read text as blocks
-            var blocks = TextAsBlocks(plaintext, blocksize);
+            var plainBlocks = plaintext.ToBitArrays(blocksize);
             var cipheredBlocks = new List<BitArray>();
 
             // Run feistel cipher for ROUNDS_COUNT rounds.
-            foreach (var block in blocks)
+            foreach (var block in plainBlocks)
             {
                 var cipheredBlock = Feistel(block, ROUNDS_COUNT);
                 cipheredBlocks.Add(cipheredBlock);
             }
             
-            var cipher = cipheredBlocks.Fuse();
-            var ciphertext = cipher.ToBase64String();
-            return ciphertext;
+            return cipheredBlocks.TranslateToString(isBase64: true);
         }
 
         public string Decrypt(string base64CipherText, string key, int blocksize)
@@ -111,10 +73,8 @@ namespace EncryptionCodingGame.Solver.Core
             GenerateKeys(key, ROUNDS_COUNT, blocksize);
             keys.Reverse();
 
-            var ciphertextBytes = Convert.FromBase64String(base64CipherText);
-
             // Read text as blocks
-            var blocks = ciphertextBytes.ToBitArrays(blocksize);
+            var blocks = base64CipherText.ToBitArrays(blocksize, isBase64: true);
             var plainBlocks = new List<BitArray>();
 
             // Run feistel cipher for ROUNDS_COUNT rounds.
@@ -125,9 +85,7 @@ namespace EncryptionCodingGame.Solver.Core
             }
 
             // Read ciphered blocks into a string
-            var plainBits = plainBlocks.Fuse();
-            var plainBytes = plainBits.ToByteArray();
-            var plaintext = Encoding.ASCII.GetString(plainBytes);
+            var plaintext = plainBlocks.TranslateToString();
 
             // Return string
             return plaintext.Split(DUMMY_STRING_TO_TRIM)[0];

@@ -135,8 +135,8 @@ namespace EncryptionCodingGame.Problem
         {
             RunLogged(() =>
             {
-                //var plaintext = "NOW THIS IS SOME LONG-ASS TEXT TO MAKE SURE IT WORKS PERFECTLY FINE!";
-                var plaintext = "yes";
+                var plaintext = "NOW THIS IS SOME LONG-ASS TEXT TO MAKE SURE IT WORKS PERFECTLY FINE!";
+                //var plaintext = "yes";
 
                 var ciphertext = this.DefaultSolver.Encrypt(plaintext, this.DefaultKey, this.DefaultBlockSize);
                 Log($"E({plaintext}) = {ciphertext}");

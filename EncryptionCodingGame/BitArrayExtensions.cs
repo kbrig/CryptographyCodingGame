@@ -10,12 +10,12 @@ namespace EncryptionCodingGame
     {
         #region Manipulations
 
-        public static BitArray MostSignificantBit(this BitArray block, int bitCount = 1)
+        public static BitArray MostSignificantBits(this BitArray block, int bitCount = 1)
         {
             return block.Subset(block.Length - bitCount, bitCount);
         }
 
-        public static BitArray LeastSignificantBit(this BitArray block, int bitCount = 1)
+        public static BitArray LeastSignificantBits(this BitArray block, int bitCount = 1)
         {
             return block.Subset(0, bitCount);
         }
@@ -172,6 +172,20 @@ namespace EncryptionCodingGame
             return arrays;
         }
 
+        public static List<BitArray> ToBitArrays(this string s, int blocksize, bool isBase64 = false, bool addPadding = true)
+        {
+            var output = isBase64
+                ? Convert.FromBase64String(s).ToBitArray()
+                : Encoding.ASCII.GetBytes(s).ToBitArray();
+
+            if (addPadding)
+            {
+                var paddingNeeded = blocksize - (output.Length % blocksize);
+                output.Length += paddingNeeded;
+            }
+            return output.Splice(blocksize);
+        }
+
         public static int[] ToInt32Array(this BitArray block)
         {
             var array = new int[block.Length / sizeof(int)];
@@ -198,6 +212,21 @@ namespace EncryptionCodingGame
         public static string ToBase64String(this BitArray block)
         {
             return block.ToByteArray().ToBase64String();
+        }
+
+        public static string GetString(this BitArray block, bool isBase64 = false)
+        {
+            var bytes = block.ToByteArray();
+            if (isBase64)
+            {
+                return Convert.ToBase64String(bytes);
+            }
+            return Encoding.ASCII.GetString(bytes);
+        }
+
+        public static string TranslateToString(this List<BitArray> blocks, bool isBase64 = false)
+        {
+            return blocks.Fuse().GetString(isBase64);
         }
 
         #endregion

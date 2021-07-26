@@ -43,12 +43,12 @@ namespace EncryptionCodingGame.Solver.Core
                 var Ci = cipherBlocks[i];
                 var Ii = new BitArray(nextInput);
                 var Oi = EncryptBlock(Ii);
-                var OiMSBs = new BitArray(Oi).MostSignificantBit(blocksize);
+                var OiMSBs = new BitArray(Oi).MostSignificantBits(blocksize);
                 var Pi = new BitArray(Ci).Xor(OiMSBs);
 
                 plainBlocks.Add(Pi);
 
-                var IiLSBs = Ii.LeastSignificantBit();
+                var IiLSBs = Ii.LeastSignificantBits();
                 nextInput = IiLSBs.Collate(Ci);
             }
 
@@ -87,12 +87,12 @@ namespace EncryptionCodingGame.Solver.Core
                 var Ii = new BitArray(nextInput);
                 var Oi = EncryptBlock(Ii);
 
-                var msbs = new BitArray(Oi).MostSignificantBit(blocksize);
+                var msbs = new BitArray(Oi).MostSignificantBits(blocksize);
                 var cipherBlock = new BitArray(msbs).Xor(plainBlock);
 
                 cipherBlocks.Add(cipherBlock);
 
-                nextInput = Ii.LeastSignificantBit(1).Collate(cipherBlock);
+                nextInput = Ii.LeastSignificantBits(1).Collate(cipherBlock);
             }
 
             var cipher = cipherBlocks.Fuse();

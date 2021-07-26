@@ -66,5 +66,16 @@ namespace EncryptionCodingGame
             output.Length = blocksize;
             return output;
         }
+
+        public static List<BitArray> NextBitArrays(this Random random, int blocksize, int count)
+        {
+            var output = new List<BitArray>();
+
+            while (count-- >= 0)
+            {
+                output.Add(random.NextBitArray(blocksize));
+            }
+            return output;
+        }
     }
 }

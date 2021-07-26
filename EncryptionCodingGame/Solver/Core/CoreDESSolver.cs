@@ -88,35 +88,27 @@ namespace EncryptionCodingGame.Solver.Core
 				return output;
 			}
 
-
-			// left Circular Shifting bits
-			public BitArray ShiftLeft(BitArray input, int numBits)
-			{
-				return input.LeftShift(numBits);
-			}
-
 			// preparing 16 keys for 16 rounds
 			public List<BitArray> GetKeys(string keyString)
 			{
+				var keyBase = keyString.ToBitArray();
 				var keys = new List<BitArray>();
-				var keyBytes = Encoding.ASCII.GetBytes(keyString);
-				var key = new BitArray(keyBytes);
 
 				// first key permutation
-				key = Permutation(PC1, key, 56);
+				keyBase = Permutation(PC1, keyBase, 56);
 				for (var i = 0; i < 16; i++)
 				{
-					var keyParts = key.Splice();
-					var left = keyParts[0];
-					var right = keyParts[1];
+					var left = keyBase.MostSignificantBits(keyBase.Length / 2);
+					var right = keyBase.LeastSignificantBits(keyBase.Length / 2);
 
-					left = ShiftLeft(left, shiftBits[i]);
-					right = ShiftLeft(right, shiftBits[i]);
+					left = left.RotateLeft(shiftBits[i]);
+					right = right.RotateLeft(shiftBits[i]);
 
-					key = left.Collate(right);
+					// No Swap here, keeping memory order Least => Most significant bit.
+					keyBase = right.Collate(left);
 
 					// second key permutation
-					keys.Add(Permutation(PC2, key, 48));
+					keys.Add(Permutation(PC2, keyBase, 48));
 				}
 				return keys;
 			}
@@ -128,16 +120,22 @@ namespace EncryptionCodingGame.Solver.Core
 				for (var i = 0; i < 48; i += 6)
 				{
 					var temp = input.Subset(i, 6);
+					// We need to keep the order from Least to Most significant instead of Most to Least.
+					// As this is the order BitArray stores its bits (LittleEndian)
+					var rowBits = temp.LeastSignificantBits().Collate(temp.MostSignificantBits());
+					var colBits = temp.Subset(1, 4);
+					
+					var cols = new int[1];
+					var rows = new int[1];
+
+					rowBits.CopyTo(rows, 0);
+					colBits.CopyTo(cols, 0);
+
 					var num = i / 6;
 
-					var row = 0;
-					row |= temp[5] ? 1 : 0;
-					row |= (temp[0] ? 1 : 0) << 1;
+					//Console.WriteLine($"\t{num}: subset: {temp.ToBinaryString()}\t; row : {rowBits.ToBinaryString()} ({rows[0]})\t; col : {colBits.ToBinaryString()} ({cols[0]})");
 
-					temp = temp.Subset(1, 4);
-					var col = temp.ToInt32Array()[0];
-
-					var sboxValue = sbox[num, row, col];
+					var sboxValue = sbox[num, rows[0], cols[0]];
 					sboxvalues[num] = sboxValue;
 				}
 				var output = new BitArray(sboxvalues);
@@ -146,8 +144,8 @@ namespace EncryptionCodingGame.Solver.Core
 
 			public BitArray Round(BitArray input, BitArray key)
 			{
-				var left = input.MostSignificantBit(input.Length / 2);
-				var right = input.LeastSignificantBit(input.Length / 2);
+				var left = input.MostSignificantBits(input.Length / 2);
+				var right = input.LeastSignificantBits(input.Length / 2);
 				var temp = new BitArray(right);
 
 				// Expansion permutation
@@ -162,7 +160,7 @@ namespace EncryptionCodingGame.Solver.Core
 				left.Xor(temp);
 
 				// swapper
-				return right.Collate(left);
+				return left.Collate(right);
 			}
 
 			private BitArray EncryptBlock(BitArray plain, List<BitArray> keys)
@@ -189,18 +187,15 @@ namespace EncryptionCodingGame.Solver.Core
 				var keys = GetKeys(key);
 
 				// initial permutation
-				var plain = plaintext.ToBitArray();
-				var blocks = plain.Splice(64);
+				var blocks = plaintext.ToBitArrays(64, addPadding: false);
 				var cipheredBlocks = new List<BitArray>();
 
                 foreach (var block in blocks)
                 {
-					cipheredBlocks.Add(EncryptBlock(block, keys));
-                }
-
-				var cipher = cipheredBlocks.Fuse();
-				var cipherText = Convert.ToBase64String(cipher.ToByteArray());
-				return cipherText;
+					var cipherBlock = EncryptBlock(block, keys);
+					cipheredBlocks.Add(cipherBlock);
+				}
+				return cipheredBlocks.TranslateToString(isBase64: true);
 			}
 
 			private BitArray DecryptBlock(BitArray cipher, List<BitArray> keys)
@@ -215,28 +210,24 @@ namespace EncryptionCodingGame.Solver.Core
 				}
 				// 32-bit swap
 				cipher = cipher.SwapHalves();
+
+				// final permutation
 				cipher = Permutation(IP1, cipher, 64);
 				return cipher;
 			}
 
 			public string Decrypt(string ciphertext, string key)
 			{
-				var cipher = ciphertext.ToBitArray(isBase64: true);
-
-				// get round keys
 				var keys = GetKeys(key);
-				var blocks = cipher.Splice(blocksize: 64);
+				var cipherBlocks = ciphertext.ToBitArrays(blocksize: 64, isBase64: true, addPadding: false);
+
 				var plainBlocks = new List<BitArray>();
-
-                foreach (var block in blocks)
+                foreach (var cipherBlock in cipherBlocks)
                 {
-					plainBlocks.Add(DecryptBlock(block, keys));
+					var plainBlock = DecryptBlock(cipherBlock, keys);
+					plainBlocks.Add(plainBlock);
                 }
-
-				var plain = plainBlocks.Fuse();
-				var plainBytes = plain.ToByteArray();
-				var plaintext = Encoding.ASCII.GetString(plainBytes);
-				return plaintext;
+				return plainBlocks.TranslateToString();
 			}
 		}
 
