@@ -135,7 +135,7 @@ namespace EncryptionCodingGame.Problem
         {
             RunLogged(() =>
             {
-                var plaintext = "TEST INPUT FOR TESTS IS GOOD FOR BLOCK CIPHERS";
+                var plaintext = "NOW THIS IS SOME LONG-ASS TEXT TO MAKE SURE IT WORKS PERFECTLY FINE!";
 
                 var ciphertext = this.DefaultSolver.Encrypt(plaintext, this.DefaultKey, this.DefaultBlockSize);
                 Log($"E({plaintext}) = {ciphertext}");

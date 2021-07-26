@@ -8,12 +8,16 @@ namespace EncryptionCodingGame
 {
     public static class BitArrayExtensions
     {
-        public static string ToBinaryString(this BitArray bits)
+        public static string ToBinaryString(this BitArray bits, int groupSize = 0)
         {
             var result = "";
             for (int i = 0; i < bits.Length; i++)
             {
                 result += bits[i] ? "1" : "0";
+                if (groupSize != 0 && i % groupSize == groupSize - 1 && i > 0)
+                {
+                    result += " ";
+                }
             }
             return result;
         }
@@ -30,6 +34,16 @@ namespace EncryptionCodingGame
 
             bits.CopyTo(bytes, 0);
             return bytes;
+        }
+
+        public static List<BitArray> ToBitArrays(this byte[] bytes, int blocksize)
+        {
+            var bits = new BitArray(bytes);
+            var paddingNeeded = blocksize - (bits.Length % blocksize);
+
+            bits.Length += paddingNeeded;
+            var arrays = bits.Splice(blocksize);
+            return arrays;
         }
 
         public static BitArray SwapHalves(this BitArray block)
@@ -111,6 +125,11 @@ namespace EncryptionCodingGame
         public static BitArray ToBitArray(this string s)
         {
             return new BitArray(Encoding.ASCII.GetBytes(s));
+        }
+
+        public static BitArray ToBitArray(this byte[] bytes)
+        {
+            return new BitArray(bytes);
         }
 
         public static string ToBase64String(this BitArray block)

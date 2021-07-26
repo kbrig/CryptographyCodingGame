@@ -51,17 +51,7 @@ namespace EncryptionCodingGame.Solver.Core
         private List<BitArray> TextAsBlocks(string text, int blocksize)
         {
             var textBytes = Encoding.ASCII.GetBytes(text);
-            return BytesAsBlocks(textBytes, blocksize);
-        }
-
-        private List<BitArray> BytesAsBlocks(byte[] bytes, int blocksize)
-        {
-            var bits = new BitArray(bytes);
-            var paddingNeeded = blocksize - (bits.Length % blocksize);
-
-            bits.Length += paddingNeeded;
-            var blocks = bits.Splice(blocksize);
-            return blocks;
+            return textBytes.ToBitArray().Splice(blocksize);
         }
 
         private BitArray Feistel(BitArray block, int roundsCount)
@@ -127,7 +117,7 @@ namespace EncryptionCodingGame.Solver.Core
             var ciphertextBytes = Convert.FromBase64String(base64CipherText);
 
             // Read text as blocks
-            var blocks = BytesAsBlocks(ciphertextBytes, blocksize);
+            var blocks = ciphertextBytes.ToBitArrays(blocksize);
             var plainBlocks = new List<BitArray>();
 
             // Run feistel cipher for ROUNDS_COUNT rounds.

@@ -7,7 +7,7 @@ namespace EncryptionCodingGame.Problem
     public class CBCEncryptionProblem : BaseBlockEncryptionProblem<ICBCSolver, string>
     {
         private static readonly ICBCSolver DEFAULT_SOLVER = new CoreCBCSolver();
-        private const int DEFAULT_BLOCK_SIZE = 8;
+        private const int DEFAULT_BLOCK_SIZE = 64;
         private const string DEFAULT_KEY = "Here's an interesting key!";
 
         private ICBCSolver solver = DEFAULT_SOLVER;
