@@ -56,9 +56,8 @@ namespace EncryptionCodingGame.Solver.Core
 
         private BitArray Feistel(BitArray block, int roundsCount)
         {
-            var halves = block.Splice();
-            var left = halves[0];
-            var right = halves[1];
+            var left = block.MostSignificantBit(block.Length / 2);          // RIGHTMOST IN MEMORY
+            var right = block.LeastSignificantBit(block.Length / 2);        // LEFTMOST IN MEMORY
 
             for (int i = 0; i < roundsCount; i++)
             {
@@ -75,7 +74,7 @@ namespace EncryptionCodingGame.Solver.Core
                 right = tmpRight;
             }
 
-            var cipherBlock = new BitArray(right.Concat(left));
+            var cipherBlock = new BitArray(left).Collate(right); // RIGHTMOST BITS + LEFTMOST BITS
             return cipherBlock;
         }
 
@@ -102,10 +101,8 @@ namespace EncryptionCodingGame.Solver.Core
                 cipheredBlocks.Add(cipheredBlock);
             }
             
-            var cipheredBits = cipheredBlocks.Fuse(blocksize);
-            var cipheredBytes = cipheredBits.ToByteArray();
-
-            var ciphertext = Convert.ToBase64String(cipheredBytes);
+            var cipher = cipheredBlocks.Fuse();
+            var ciphertext = cipher.ToBase64String();
             return ciphertext;
         }
 
@@ -128,7 +125,7 @@ namespace EncryptionCodingGame.Solver.Core
             }
 
             // Read ciphered blocks into a string
-            var plainBits = plainBlocks.Fuse(blocksize);
+            var plainBits = plainBlocks.Fuse();
             var plainBytes = plainBits.ToByteArray();
             var plaintext = Encoding.ASCII.GetString(plainBytes);
 

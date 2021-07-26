@@ -4,19 +4,19 @@ using EncryptionCodingGame.Solver.Core;
 
 namespace EncryptionCodingGame.Problem
 {
-    public class ECBEncryptionProblem : BaseBlockEncryptionProblem<IECBSolver, string>
+    public class CFBEncryptionProblem : BaseBlockEncryptionProblem<ICFBSolver, string>
     {
-        private static readonly IECBSolver DEFAULT_SOLVER = new CoreECBSolver();
-        private const int DEFAULT_BLOCK_SIZE = 64;
-        private const string DEFAULT_KEY = "MikeyIsMyKey";
+        private const int DEFAULT_BLOCK_SIZE = 3;
+        private static readonly ICFBSolver DEFAULT_SOLVER = new CoreCFBSolver();
+        private const string DEFAULT_KEY = "This key is cool and secure";
+
+        private int blocksize = DEFAULT_BLOCK_SIZE;
+        private ICFBSolver solver = DEFAULT_SOLVER;
+        private string key = DEFAULT_KEY;
 
         protected override int DefaultBlockSize => DEFAULT_BLOCK_SIZE;
-        protected override IECBSolver DefaultSolver => DEFAULT_SOLVER;
+        protected override ICFBSolver DefaultSolver => DEFAULT_SOLVER;
         protected override string DefaultKey => DEFAULT_KEY;
-
-        private IECBSolver solver = DEFAULT_SOLVER;
-        private string key = DEFAULT_KEY;
-        private int blocksize = DEFAULT_BLOCK_SIZE;
 
         public override string Decrypt(string ciphertext)
         {
@@ -35,7 +35,7 @@ namespace EncryptionCodingGame.Problem
             this.blocksize = Tools.ReadInputOrDefault("Block size?", blocksize);
         }
 
-        protected override SolverResult _SolverRun(IECBSolver solver)
+        protected override SolverResult _SolverRun(ICFBSolver solver)
         {
             var plaintext = "GAMEPLAINTEXT".ToUpper();
             var key = DEFAULT_KEY;

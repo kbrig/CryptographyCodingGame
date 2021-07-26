@@ -15,7 +15,7 @@ namespace EncryptionCodingGame.Problem
         private int blocksize = DEFAULT_BLOCKSIZE;
         private string key = DEFAULT_KEY;
 
-        public override int DefaultBlockSize => DEFAULT_BLOCKSIZE;
+        protected override int DefaultBlockSize => DEFAULT_BLOCKSIZE;
         protected override IFeistelSolver DefaultSolver => DEFAULT_SOLVER;
         protected override string DefaultKey => DEFAULT_KEY;
 

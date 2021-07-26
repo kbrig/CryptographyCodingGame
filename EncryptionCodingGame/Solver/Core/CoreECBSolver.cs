@@ -10,7 +10,7 @@ namespace EncryptionCodingGame.Solver.Core
         public string Decrypt(string ciphertext, string key, int blocksize)
         {
             var keyBits = key.ToBitArray();
-            var cipher = ciphertext.FromBase64().ToBitArray();
+            var cipher = ciphertext.ToBitArray(isBase64: true);
 
             keyBits.Length = blocksize;
             var blocks = cipher.Splice(blocksize);

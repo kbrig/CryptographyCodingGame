@@ -113,7 +113,7 @@ namespace EncryptionCodingGame.Solver.Core
 					left = ShiftLeft(left, shiftBits[i]);
 					right = ShiftLeft(right, shiftBits[i]);
 
-					key = left.Concat(right);
+					key = left.Collate(right);
 
 					// second key permutation
 					keys.Add(Permutation(PC2, key, 48));
@@ -146,9 +146,8 @@ namespace EncryptionCodingGame.Solver.Core
 
 			public BitArray Round(BitArray input, BitArray key)
 			{
-				var parts = input.Splice();
-				var left = parts[0];
-				var right = parts[1];
+				var left = input.MostSignificantBit(input.Length / 2);
+				var right = input.LeastSignificantBit(input.Length / 2);
 				var temp = new BitArray(right);
 
 				// Expansion permutation
@@ -163,7 +162,7 @@ namespace EncryptionCodingGame.Solver.Core
 				left.Xor(temp);
 
 				// swapper
-				return right.Concat(left);
+				return right.Collate(left);
 			}
 
 			private BitArray EncryptBlock(BitArray plain, List<BitArray> keys)
@@ -222,12 +221,11 @@ namespace EncryptionCodingGame.Solver.Core
 
 			public string Decrypt(string ciphertext, string key)
 			{
-				var cipherBytes = Convert.FromBase64String(ciphertext);
-				var cipher = new BitArray(cipherBytes);
+				var cipher = ciphertext.ToBitArray(isBase64: true);
 
 				// get round keys
 				var keys = GetKeys(key);
-				var blocks = cipher.Splice(64);
+				var blocks = cipher.Splice(blocksize: 64);
 				var plainBlocks = new List<BitArray>();
 
                 foreach (var block in blocks)

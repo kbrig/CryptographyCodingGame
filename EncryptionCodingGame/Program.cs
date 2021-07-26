@@ -20,7 +20,8 @@ namespace EncryptionCodingGame
             new FeistelEncryptionProblem(),
             new DESEncryptionProblem(),
             new ECBEncryptionProblem(),
-            new CBCEncryptionProblem()
+            new CBCEncryptionProblem(),
+            new CFBEncryptionProblem()
         };
 
         static Dictionary<Type, Func<ISolver>> SolverFactory = new Dictionary<Type, Func<ISolver>>
@@ -34,7 +35,8 @@ namespace EncryptionCodingGame
             { typeof(FeistelEncryptionProblem),     () => new PIFeistelSolver() },
             { typeof(DESEncryptionProblem),         () => new PIDESSolver() },
             { typeof(ECBEncryptionProblem),         () => new PIECBSolver() },
-            { typeof(CBCEncryptionProblem),         () => new PICBCSolver() }
+            { typeof(CBCEncryptionProblem),         () => new PICBCSolver() },
+            { typeof(CFBEncryptionProblem),         () => new PICFBSolver() }
         };
 
         static void Main(string[] args)

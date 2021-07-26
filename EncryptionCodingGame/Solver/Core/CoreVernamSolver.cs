@@ -15,12 +15,12 @@
 
         public string Decrypt(string ciphertext, string key)
         {
-            return DoVernam(ciphertext.FromBase64(), key);
+            return DoVernam(GeneralExtensions.FromBase64String(ciphertext), key);
         }
 
         public string Encrypt(string plaintext, string key)
         {
-            return DoVernam(plaintext, key).ToBase64();
+            return DoVernam(plaintext, key).ToBase64String();
         }
     }
 }

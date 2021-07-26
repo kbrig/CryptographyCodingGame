@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,21 +35,36 @@ namespace EncryptionCodingGame
             return val;
         }
 
-        public static string FromBase64(this string s)
+        public static string FromBase64String(this string s)
         {
             var bytes = Convert.FromBase64String(s);
             var output = Encoding.ASCII.GetString(bytes);
             return output;
         }
 
-        public static string ToBase64(this string s)
+        public static string ToBase64String(this string s)
         {
-            return Convert.ToBase64String(s.ToByteArray());
+            return s.ToByteArray().ToBase64String();
+        }
+
+        public static string ToBase64String(this byte[] bytes)
+        {
+            return Convert.ToBase64String(bytes);
         }
 
         public static byte[] ToByteArray(this string s)
         {
             return Encoding.ASCII.GetBytes(s);
+        }
+
+        public static BitArray NextBitArray(this Random random, int blocksize)
+        {
+            var outputBuffer = new byte[blocksize];
+            random.NextBytes(outputBuffer);
+
+            var output = new BitArray(outputBuffer);
+            output.Length = blocksize;
+            return output;
         }
     }
 }

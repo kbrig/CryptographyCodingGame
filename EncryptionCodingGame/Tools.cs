@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+
 namespace EncryptionCodingGame
 {
     public static class Tools
@@ -27,6 +29,14 @@ namespace EncryptionCodingGame
         public static string MultiplyChar(char c, int length)
         {
             return "".PadRight(length, c);
+        }
+
+        public static Random GetSeededRandomFromKeyString(string key)
+        {
+            var keyBytes = key.ToByteArray();
+            var seed = keyBytes.Sum(x => x);
+            var random = new Random(seed);
+            return random;
         }
     }
 }
