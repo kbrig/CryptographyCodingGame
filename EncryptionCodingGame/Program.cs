@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using EncryptionCodingGame.Problem;
 using EncryptionCodingGame.Solver;
-using EncryptionCodingGame.Solver.Core;
 using EncryptionCodingGame.Solver.PlayerImplementation;
 
 namespace EncryptionCodingGame
@@ -21,7 +20,8 @@ namespace EncryptionCodingGame
             new DESEncryptionProblem(),
             new ECBEncryptionProblem(),
             new CBCEncryptionProblem(),
-            new CFBEncryptionProblem()
+            new CFBEncryptionProblem(),
+            new OFBEncryptionProblem()
         };
 
         static Dictionary<Type, Func<ISolver>> SolverFactory = new Dictionary<Type, Func<ISolver>>
@@ -36,7 +36,8 @@ namespace EncryptionCodingGame
             { typeof(DESEncryptionProblem),         () => new PIDESSolver() },
             { typeof(ECBEncryptionProblem),         () => new PIECBSolver() },
             { typeof(CBCEncryptionProblem),         () => new PICBCSolver() },
-            { typeof(CFBEncryptionProblem),         () => new PICFBSolver() }
+            { typeof(CFBEncryptionProblem),         () => new PICFBSolver() },
+            { typeof(OFBEncryptionProblem),         () => new PIOFBSolver() }
         };
 
         static void Main(string[] args)
@@ -96,7 +97,7 @@ namespace EncryptionCodingGame
                 Console.WriteLine("0\t: Exit Tool Mode");
                 for (int i = 0; i < problems.Length; i++)
                 {
-                    Console.WriteLine($"{i + 1}\t: {problems[i].GetType().Name}");
+                    Console.WriteLine($"{i + 1}\t: {problems[i].GetType().Name.Split("EncryptionProblem")[0]}");
                 }
                 Console.WriteLine();
 
