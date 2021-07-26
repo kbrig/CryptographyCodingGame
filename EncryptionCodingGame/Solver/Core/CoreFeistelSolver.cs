@@ -102,7 +102,7 @@ namespace EncryptionCodingGame.Solver.Core
                 cipheredBlocks.Add(cipheredBlock);
             }
             
-            var cipheredBits = cipheredBlocks.FuseBlocks(blocksize);
+            var cipheredBits = cipheredBlocks.Fuse(blocksize);
             var cipheredBytes = cipheredBits.ToByteArray();
 
             var ciphertext = Convert.ToBase64String(cipheredBytes);
@@ -128,7 +128,7 @@ namespace EncryptionCodingGame.Solver.Core
             }
 
             // Read ciphered blocks into a string
-            var plainBits = plainBlocks.FuseBlocks(blocksize);
+            var plainBits = plainBlocks.Fuse(blocksize);
             var plainBytes = plainBits.ToByteArray();
             var plaintext = Encoding.ASCII.GetString(plainBytes);
 
