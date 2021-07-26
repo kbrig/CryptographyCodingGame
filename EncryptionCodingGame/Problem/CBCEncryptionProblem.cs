@@ -14,7 +14,7 @@ namespace EncryptionCodingGame.Problem
         private int blocksize = DEFAULT_BLOCK_SIZE;
         private string key = DEFAULT_KEY;
 
-        public override int DefaultBlockSize => DEFAULT_BLOCK_SIZE;
+        protected override int DefaultBlockSize => DEFAULT_BLOCK_SIZE;
         protected override ICBCSolver DefaultSolver => DEFAULT_SOLVER;
         protected override string DefaultKey => DEFAULT_KEY;
 

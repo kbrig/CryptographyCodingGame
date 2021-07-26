@@ -129,7 +129,7 @@ namespace EncryptionCodingGame.Problem
     public abstract class BaseBlockEncryptionProblem<TSolver, TKey> : BaseEncryptionProblem<TSolver, TKey>
         where TSolver : class, IBlockSolver<TKey>
     {
-        public abstract int DefaultBlockSize { get; }
+        protected abstract int DefaultBlockSize { get; }
 
         public override void RunCoreSolver()
         {

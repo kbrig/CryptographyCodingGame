@@ -11,7 +11,6 @@ namespace EncryptionCodingGame.Solver.Core
         public string Decrypt(string ciphertext, string key, int blocksize)
         {
             var cipher = Convert.FromBase64String(ciphertext).ToBitArray();
-            //Console.WriteLine($"Read Cipher:\t{cipher.ToBinaryString(blocksize)}");
             var blocks = cipher.Splice(blocksize);
 
             var keyBytes = key.ToByteArray();
@@ -25,8 +24,6 @@ namespace EncryptionCodingGame.Solver.Core
             var keyblock = new BitArray(cipherkeyBytes);
             var ivblock = new BitArray(vectorbytes);
             keyblock.Length = ivblock.Length = blocksize;
-            //Console.WriteLine($"Key:\t{keyblock.ToBinaryString()}");
-            //Console.WriteLine($"IV:\t{ivblock.ToBinaryString()}");
 
             var plainBlocks = new List<BitArray>();
             var lastCipher = ivblock;
@@ -40,18 +37,10 @@ namespace EncryptionCodingGame.Solver.Core
 
                 plainBlocks.Add(plainBlock);
 
-
-                //Console.WriteLine($"Decryption of ciphertext block {i}:");
-                //Console.WriteLine($"\tP{i} = D(K, C{i}) ^ C{i-1} where C-1 = IV");
-                //Console.WriteLine($"\tP{i} = {keyblock.ToBinaryString()} ^ {lastCipher.ToBinaryString()} ^ {cipherBlock.ToBinaryString()}");
-                //Console.WriteLine($"\tP{i} = {keyblock.ToBinaryString()} ^ {tmp.ToBinaryString()}");
-                //Console.WriteLine($"\tP{i} = {cipherBlock.ToBinaryString()}");
-
                 lastCipher = new BitArray(blocks[i]);
             }
 
             var plain = plainBlocks.FuseBlocks();
-            //Console.WriteLine($"Write Plain:\t{plain.ToBinaryString(blocksize)}");
             var plainbytes = plain.ToByteArray();
             var plaintext = Encoding.ASCII.GetString(plainbytes);
             return plaintext;
@@ -71,7 +60,6 @@ namespace EncryptionCodingGame.Solver.Core
         {
             var plain = plaintext.ToBitArray();
             var blocks = plain.Splice(blocksize);
-            //Console.WriteLine($"Read Plain:\t{plain.ToBinaryString(blocksize)}");
 
             var keyBytes = key.ToByteArray();
             var seed = keyBytes.Sum(x => x);
@@ -84,8 +72,6 @@ namespace EncryptionCodingGame.Solver.Core
             var keyblock = new BitArray(cipherkeyBytes);
             var ivblock = new BitArray(vectorbytes);
             keyblock.Length = ivblock.Length = blocksize;
-            //Console.WriteLine($"Key:\t{keyblock.ToBinaryString()}");
-            //Console.WriteLine($"IV:\t{ivblock.ToBinaryString()}");
 
             var cipherBlocks = new List<BitArray>();
             var lastCipher = ivblock;
@@ -98,16 +84,10 @@ namespace EncryptionCodingGame.Solver.Core
                 var cipherBlock = EncryptFunction(tmp, keyblock);
                 cipherBlocks.Add(cipherBlock);
 
-                //Console.WriteLine($"Encryption of plaintext block {i}:");
-                //Console.WriteLine($"\tC{i} = E(K, C{i - 1} ^ P{i}) where C-1 = IV");
-                //Console.WriteLine($"\tC{i} = {keyblock.ToBinaryString()} ^ {lastCipher.ToBinaryString()} ^ {block.ToBinaryString()}");
-                //Console.WriteLine($"\tC{i} = {keyblock.ToBinaryString()} ^ {tmp.ToBinaryString()}");
-                //Console.WriteLine($"\tC{i} = {cipherBlock.ToBinaryString()}");
                 lastCipher = new BitArray(cipherBlock);
             }
 
             var cipher = cipherBlocks.FuseBlocks();
-            //Console.WriteLine($"Write Cipher:\t{cipher.ToBinaryString(blocksize)}");
             return cipher.ToBase64String();
         }
     }
