@@ -178,7 +178,7 @@ namespace EncryptionCodingGame
                 ? Convert.FromBase64String(s).ToBitArray()
                 : Encoding.ASCII.GetBytes(s).ToBitArray();
 
-            if (addPadding)
+            if (addPadding && output.Length % blocksize != 0)
             {
                 var paddingNeeded = blocksize - (output.Length % blocksize);
                 output.Length += paddingNeeded;

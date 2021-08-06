@@ -36,9 +36,9 @@ namespace EncryptionCodingGame.Solver.Core
                     index = index - shift;
                     if (index < 0)
                     {
-                        index = alphabet.Length + index;
+                        index = alphabet.Length + index % alphabet.Length;
                     }
-                    plaintext += alphabet[index];
+                    plaintext += alphabet[index % alphabet.Length];
                 }
             }
             return plaintext;

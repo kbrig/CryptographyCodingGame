@@ -21,7 +21,8 @@ namespace EncryptionCodingGame
             new ECBEncryptionProblem(),
             new CBCEncryptionProblem(),
             new CFBEncryptionProblem(),
-            new OFBEncryptionProblem()
+            new OFBEncryptionProblem(),
+            new CTREncryptionProblem()
         };
 
         static Dictionary<Type, Func<ISolver>> SolverFactory = new Dictionary<Type, Func<ISolver>>
@@ -37,7 +38,8 @@ namespace EncryptionCodingGame
             { typeof(ECBEncryptionProblem),         () => new PIECBSolver() },
             { typeof(CBCEncryptionProblem),         () => new PICBCSolver() },
             { typeof(CFBEncryptionProblem),         () => new PICFBSolver() },
-            { typeof(OFBEncryptionProblem),         () => new PIOFBSolver() }
+            { typeof(OFBEncryptionProblem),         () => new PIOFBSolver() },
+            { typeof(CTREncryptionProblem),         () => new PICTRSolver() }
         };
 
         static void Main(string[] args)

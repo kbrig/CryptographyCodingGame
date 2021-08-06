@@ -26,5 +26,7 @@ namespace EncryptionCodingGame.Solver
     public interface ICBCSolver : IBlockSolver<string> { }
     public interface ICFBSolver : IBlockSolver<string> { }
     public interface IOFBSolver : IBlockSolver<string> { }
+    public interface ICTRSolver : IBlockSolver<int> { }
+
 
 }
